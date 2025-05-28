@@ -1,0 +1,886 @@
+{
+    "header": {
+        "generalManagement": "Quản lý chung",
+        "userManagement": "Quản lý người dùng",
+        "assetManagement": "Quản lý thiết bị",
+        "repairManagement": "Quản lý sửa chữa",
+        "ipManagement": "Quản lý IP",
+        "networkSegment": "Phân đoạn mạng",
+        "ipDivision": "Phân chia IP",
+        "exportIP": "Xuất IP",
+        "ipHistory": "Lịch sử IP",
+        "script": "Script",
+        "createADUser": "Tạo ADUser và DHCP",
+        "setLogon": "Thiết lập đăng nhập",
+        "deleteUser": "Xóa người dùng",
+        "addGroupMail": "Thêm nhóm mail",
+        "changeUserInfo": "Thay đổi thông tin người dùng",
+        "createShareFile": "Tạo file chia sẻ",
+        "deleteDHCP": "Xóa DHCP",
+        "historyStatus": "Lịch sử trạng thái",
+        "admin": "Quản trị viên",
+        "user": "Người dùng",
+        "logout": "Đăng xuất",
+        "backToList": "Quay lại danh sách",
+        "search": "Tìm kiếm",
+        "filter": "Lọc",
+        "actions": "Thao tác",
+        "edit": "Sửa",
+        "delete": "Xóa",
+        "cancel": "Hủy",
+        "save": "Lưu",
+        "confirm": "Xác nhận",
+        "warning": "Cảnh báo",
+        "success": "Thành công",
+        "error": "Lỗi",
+        "loading": "Đang tải...",
+        "noData": "Không có dữ liệu",
+        "welcome": "Chào mừng",
+        "profile": "Hồ sơ",
+        "settings": "Cài đặt",
+        "language": "Ngôn ngữ",
+        "vietnamese": "Tiếng Việt",
+        "english": "Tiếng Anh",
+        "darkMode": "Chế độ tối",
+        "lightMode": "Chế độ sáng",
+        "notification": "Thông báo",
+        "messages": "Tin nhắn",
+        "viewAll": "Xem tất cả",
+        "markAsRead": "Đánh dấu đã đọc",
+        "clearAll": "Xóa tất cả",
+        "newMessage": "Tin nhắn mới",
+        "noNotifications": "Không có thông báo",
+        "noMessages": "Không có tin nhắn",
+        "lastLogin": "Đăng nhập lần cuối",
+        "version": "Phiên bản",
+        "copyright": "Bản quyền",
+        "poweredBy": "Được phát triển bởi",
+        "support": "Hỗ trợ",
+        "help": "Trợ giúp",
+        "about": "Giới thiệu",
+        "contact": "Liên hệ",
+        "terms": "Điều khoản",
+        "privacy": "Quyền riêng tư",
+        "status": {
+            "online": "Trực tuyến",
+            "offline": "Ngoại tuyến",
+            "away": "Vắng mặt",
+            "busy": "Bận"
+        }
+    },
+    "dashboard": {
+        "title": "Hệ thống Quản lý Thiết bị SMV",
+        "subtitle": "Giải pháp toàn diện cho việc quản lý và theo dõi thiết bị trong tổ chức",
+        "carousel": {
+            "title": "Quản lý thiết bị thông minh",
+            "description": "Giải pháp toàn diện cho việc theo dõi và quản lý thiết bị"
+        },
+        "stats": {
+            "title": "Thống kê tổng quan",
+            "totalDevices": "Tổng số thiết bị",
+            "inUse": "Đang sử dụng",
+            "installing": "Đang cài đặt",
+            "pendingDelete": "Chờ xóa"
+        },
+        "features": {
+            "title": "Tính năng chính",
+            "viewDetails": "Xem chi tiết",
+            "assetManagement": {
+                "title": "Quản lý thiết bị",
+                "description": "Theo dõi và quản lý tất cả thiết bị trong tổ chức"
+            },
+            "userManagement": {
+                "title": "Quản lý người dùng",
+                "description": "Quản lý người dùng và kiểm soát quyền truy cập"
+            },
+            "assetHistory": {
+                "title": "Lịch sử thiết bị",
+                "description": "Xem lịch sử thay đổi của thiết bị"
+            },
+            "segmentList": {
+                "title": "Danh sách phân đoạn",
+                "description": "Xem danh sách các phân đoạn mạng"
+            },
+            "exportIP": {
+                "title": "Xuất IP",
+                "description": "Xuất danh sách các địa chỉ IP đã cấp phát"
+            },
+            "ipHistory": {
+                "title": "Lịch sử IP",
+                "description": "Xem lịch sử thay đổi của địa chỉ IP"
+            }
+        },
+        "deviceTypes": {
+            "title": "Loại thiết bị",
+            "computer": "Máy tính",
+            "phone": "Điện thoại",
+            "tablet": "Máy tính bảng",
+            "server": "Máy chủ",
+            "networkDevice": "Thiết bị mạng",
+            "printer": "Máy in",
+            "headphone": "Tai nghe",
+            "keyboard": "Bàn phím",
+            "mouse": "Chuột"
+        },
+        "loading": "Đang tải..."
+    },
+    "manageUser": {
+        "title": "Quản lý danh sách người dùng",
+        "searchPlaceholder": "Tìm kiếm theo mã nhân viên, họ tên hoặc email...",
+        "addNewUser": "Thêm người dùng mới",
+        "backToList": "Quay lại danh sách",
+        "filters": {
+            "status": "Trạng thái",
+            "allStatus": "Tất cả trạng thái",
+            "businessUnit": "Đơn vị (BU)",
+            "allBusinessUnits": "Tất cả đơn vị",
+            "department": "Phòng ban",
+            "allDepartments": "Tất cả phòng ban",
+            "position": "Chức vụ",
+            "allPositions": "Tất cả chức vụ",
+            "loadingDepartments": "Đang tải phòng ban..."
+        },
+        "table": {
+            "employeeCode": "Mã nhân viên",
+            "fullName": "Họ và tên",
+            "email": "Email",
+            "businessUnit": "Đơn vị",
+            "department": "Phòng ban",
+            "position": "Chức vụ",
+            "status": "Trạng thái",
+            "noUsersFound": "Không tìm thấy người dùng nào phù hợp với bộ lọc",
+            "loading": "Đang tải danh sách người dùng..."
+        },
+        "userDetail": {
+            "title": "Thông tin chi tiết người dùng",
+            "basicInfo": {
+                "firstName": "Họ",
+                "lastName": "Tên",
+                "employeeCode": "Mã nhân viên",
+                "email": "Email",
+                "businessUnit": "Đơn vị (BU)",
+                "department": "Phòng ban",
+                "position": "Chức vụ",
+                "role": "Vai trò",
+                "joinDate": "Ngày vào làm",
+                "leaveDate": "Ngày nghỉ việc",
+                "notResigned": "Chưa nghỉ việc",
+                "note": "Ghi chú",
+                "noNote": "Chưa có ghi chú"
+            },
+            "editInfo": "Chỉnh sửa thông tin",
+            "assets": {
+                "title": "Danh sách thiết bị đang sử dụng",
+                "noAssets": "Người dùng chưa được cấp thiết bị nào",
+                "columns": {
+                    "assetCode": "Mã thiết bị",
+                    "assetName": "Tên thiết bị",
+                    "type": "Loại",
+                    "status": "Trạng thái",
+                    "handoverDate": "Ngày cấp"
+                }
+            }
+        },
+        "modals": {
+            "createUser": {
+                "title": "Thêm người dùng mới",
+                "requiredFields": "Các trường bắt buộc",
+                "fields": {
+                    "employeeCode": "Mã nhân viên",
+                    "email": "Email",
+                    "firstName": "Họ",
+                    "lastName": "Tên",
+                    "password": "Mật khẩu",
+                    "role": "Vai trò",
+                    "businessUnit": "Đơn vị (BU)",
+                    "department": "Phòng ban",
+                    "position": "Chức vụ",
+                    "joinDate": "Ngày vào làm",
+                    "workStatus": "Trạng thái làm việc",
+                    "note": "Ghi chú"
+                },
+                "selectBusinessUnitFirst": "Vui lòng chọn đơn vị trước",
+                "buttons": {
+                    "cancel": "Hủy",
+                    "create": "Tạo tài khoản",
+                    "creating": "Đang tạo..."
+                }
+            },
+            "editUser": {
+                "title": "Chỉnh sửa thông tin người dùng",
+                "buttons": {
+                    "cancel": "Hủy",
+                    "save": "Lưu thay đổi",
+                    "saving": "Đang lưu..."
+                }
+            },
+            "assetDetail": {
+                "title": "Thông tin chi tiết thiết bị",
+                "loading": "Đang tải thông tin chi tiết...",
+                "fields": {
+                    "assetCode": "Mã thiết bị",
+                    "assetName": "Tên thiết bị",
+                    "deviceType": "Loại thiết bị",
+                    "brand": "Thương hiệu",
+                    "model": "Model",
+                    "serialNumber": "Serial Number",
+                    "os": "Hệ điều hành",
+                    "office": "Office",
+                    "configuration": "Cấu hình",
+                    "ipAddress": "IP Address",
+                    "macAddress": "MAC Address",
+                    "hub": "Hub",
+                    "vcsLan": "VCS LAN",
+                    "factoryArea": "Khu vực",
+                    "location": "Vị trí"
+                },
+                "close": "Đóng"
+            }
+        },
+        "status": {
+            "working": "Đang làm việc",
+            "onLeave": "Đang nghỉ",
+            "resigned": "Đã nghỉ việc"
+        },
+        "roles": {
+            "admin": "Admin",
+            "user": "User"
+        },
+        "messages": {
+            "userCreated": "Tạo user {{empCode}} và folder lưu trữ thành công",
+            "folderExists": "Thư mục đã tồn tại",
+            "userUpdated": "Cập nhật người dùng thành công!",
+            "searchAgain": "Vui lòng tìm kiếm lại bằng mã nhân viên"
+        },
+        "pagination": {
+            "showing": "Hiển thị",
+            "of": "trên tổng số",
+            "entries": "bản ghi"
+        }
+    },
+    "addGroupMail": {
+        "title": "Danh sách ADD_Group_Mail",
+        "exportCSV": "Export CSV",
+        "addRow": "Thêm dòng",
+        "table": {
+            "stt": "STT",
+            "samAccountName": "SamAccountName",
+            "name": "Name",
+            "identity": "Identity",
+            "actions": "Actions"
+        },
+        "placeholders": {
+            "empCode": "Nhập emp_code",
+            "mailGroup": "Chọn Mail Group"
+        },
+        "messages": {
+            "userNotFound": "Không tìm thấy thông tin người dùng",
+            "fetchError": "Lỗi khi lấy thông tin người dùng"
+        }
+    },
+    "setLogon": {
+        "title": "Danh sách Set LogOn",
+        "exportCSV": "Export CSV",
+        "complete": "Hoàn thành",
+        "updating": "Đang cập nhật...",
+        "table": {
+            "stt": "STT",
+            "firstname": "firstname",
+            "lastname": "lastname",
+            "id": "id",
+            "oldpc": "oldpc",
+            "newpc": "newpc",
+            "buName": "BUName"
+        },
+        "placeholders": {
+            "oldpc": "Nhập oldpc"
+        },
+        "modal": {
+            "title": "Xác nhận hoàn thành",
+            "warning": "Bạn đã chạy script Set LogOn và DHCP chưa?",
+            "description": "Vui lòng đảm bảo đã chạy các script trước khi cập nhật trạng thái.",
+            "buttons": {
+                "checkAgain": "Chưa, để tôi kiểm tra lại",
+                "proceed": "Đã chạy, tiến hành cập nhật"
+            }
+        },
+        "messages": {
+            "loadError": "Không thể tải danh sách AD Users",
+            "updateSuccess": "Cập nhật trạng thái thành công",
+            "updateError": "Lỗi khi cập nhật trạng thái"
+        }
+    },
+    "deleteUser": {
+        "title": "Danh sách người dùng chờ xóa",
+        "exportCSV": "Export CSV",
+        "complete": "Hoàn thành",
+        "updating": "Đang cập nhật...",
+        "table": {
+            "stt": "STT",
+            "username": "Username",
+            "email": "Email"
+        },
+        "messages": {
+            "loadError": "Không thể tải danh sách người dùng",
+            "updateSuccess": "Cập nhật trạng thái thành công",
+            "updateError": "Lỗi khi cập nhật trạng thái"
+        }
+    },
+    "deleteDHCP": {
+        "title": "Danh sách Delete_DHCP_Reservation",
+        "exportCSV": "Export CSV",
+        "complete": "Hoàn thành",
+        "updating": "Đang cập nhật...",
+        "table": {
+            "stt": "STT",
+            "ip": "IP",
+            "mac": "Mac",
+            "hostname": "Hostname",
+            "description": "Description",
+            "scopeID": "ScopeID",
+            "bu": "BU"
+        },
+        "placeholders": {
+            "ip": "Nhập IP"
+        },
+        "modal": {
+            "title": "Xác nhận hoàn thành",
+            "warning": "Bạn đã chạy script DHCP chưa?",
+            "description": "Vui lòng đảm bảo đã chạy script trước khi cập nhật trạng thái.",
+            "buttons": {
+                "checkAgain": "Chưa, để tôi kiểm tra lại",
+                "proceed": "Đã chạy, tiến hành cập nhật"
+            }
+        },
+        "messages": {
+            "loadError": "Không thể tải danh sách DHCP Users",
+            "updateSuccess": "Cập nhật trạng thái thành công",
+            "updateError": "Lỗi khi cập nhật trạng thái"
+        }
+    },
+    "createShareFile": {
+        "title": "Danh sách Create_ShareFile",
+        "exportCSV": "Export CSV",
+        "addRow": "Thêm dòng Create Share File",
+        "table": {
+            "stt": "STT",
+            "localUser": "LocalUser",
+            "password": "Password",
+            "description": "Description",
+            "fullName": "FullName",
+            "groupName": "GroupName",
+            "actions": "Actions"
+        },
+        "placeholders": {
+            "id": "Nhập ID",
+            "groupName": "Chọn Group Name"
+        },
+        "modal": {
+            "title": "Xác nhận Export",
+            "description": "Bạn có chắc chắn muốn export dữ liệu Create Share File?",
+            "buttons": {
+                "cancel": "Hủy",
+                "export": "Export"
+            }
+        },
+        "messages": {
+            "userNotFound": "Không tìm thấy thông tin người dùng",
+            "fetchError": "Lỗi khi lấy thông tin người dùng"
+        }
+    },
+    "changeInforUser": {
+        "title": "Danh sách Change User Information",
+        "exportCSV": "Export CSV",
+        "addRow": "Thêm dòng",
+        "table": {
+            "stt": "STT",
+            "id": "ID",
+            "fullName": "Full Name",
+            "jobTitle": "Job Title",
+            "department": "Department",
+            "actions": "Actions"
+        },
+        "placeholders": {
+            "id": "Nhập ID"
+        },
+        "messages": {
+            "userNotFound": "Không tìm thấy thông tin người dùng",
+            "fetchError": "Lỗi khi lấy thông tin người dùng"
+        }
+    },
+    "createADUser": {
+        "title": "Danh sách Create_ADUsers",
+        "exportCSV": "Export CSV",
+        "complete": "Hoàn thành",
+        "updating": "Đang cập nhật...",
+        "table": {
+            "stt": "STT",
+            "firstname": "firstname",
+            "lastname": "lastname",
+            "username": "Username",
+            "email": "Email",
+            "department": "department",
+            "jobtitle": "jobtitle",
+            "workstation": "Workstation",
+            "description": "description"
+        },
+        "deviceInfo": {
+            "title": "Danh sách Create_DHCP_Reservation",
+            "table": {
+                "stt": "STT",
+                "ip": "IP",
+                "mac": "Mac",
+                "hostname": "Hostname",
+                "description": "Description",
+                "scopeID": "ScopeID",
+                "bu": "BU"
+            },
+            "placeholders": {
+                "ip": "Nhập IP"
+            }
+        },
+        "groupMail": {
+            "title": "Danh sách ADD_Group_Mail",
+            "table": {
+                "stt": "STT",
+                "samAccountName": "SamAccountName",
+                "name": "Name",
+                "identity": "Identity"
+            },
+            "placeholders": {
+                "mailGroup": "Chọn Mail Group"
+            }
+        },
+        "shareFile": {
+            "title": "Danh sách Create Share File",
+            "table": {
+                "stt": "STT",
+                "localUser": "LocalUser",
+                "password": "Password",
+                "description": "Description",
+                "fullName": "FullName",
+                "groupName": "GroupName"
+            }
+        },
+        "modal": {
+            "title": "Xác nhận hoàn thành",
+            "warning": "Bạn đã chạy script Add User và DHCP chưa?",
+            "description": "Vui lòng đảm bảo đã chạy các script trước khi cập nhật trạng thái.",
+            "buttons": {
+                "checkAgain": "Chưa, để tôi kiểm tra lại",
+                "proceed": "Đã chạy, tiến hành cập nhật"
+            }
+        },
+        "messages": {
+            "loadError": "Không thể tải danh sách AD Users",
+            "updateSuccess": "Cập nhật trạng thái thành công",
+            "updateError": "Lỗi khi cập nhật trạng thái"
+        }
+    },
+    "historyone": {
+        "title": "Lịch sử thiết bị",
+        "filters": {
+            "allStatus": "Tất cả trạng thái",
+            "registered": "Đã đăng ký",
+            "inUse": "Đang sử dụng",
+            "pendingHandover": "Chờ bàn giao",
+            "pendingDelete": "Đang chờ xóa",
+            "pendingAllocationDelete": "Cấp phát chờ xóa",
+            "canceled": "Hủy bỏ",
+            "other": "Khác"
+        },
+        "search": {
+            "placeholder": "Tìm kiếm theo mã thiết bị, tên thiết bị, mã nhân viên hoặc tên nhân viên..."
+        },
+        "refresh": "Làm mới",
+        "table": {
+            "assetCode": "Mã thiết bị",
+            "assetName": "Tên thiết bị",
+            "employeeCode": "Mã nhân viên",
+            "employeeName": "Tên nhân viên",
+            "handoverBy": "Người bàn giao",
+            "status": "Trạng thái",
+            "handoverDate": "Ngày bàn giao",
+            "returnDate": "Ngày trả",
+            "floor": "Tầng",
+            "note": "Ghi chú"
+        },
+        "status": {
+            "registered": "Đã đăng ký",
+            "inUse": "Đang sử dụng",
+            "stopped": "Ngưng sử dụng",
+            "pendingDelete": "Đang chờ xóa",
+            "returned": "Đã trả lại",
+            "pendingHandover": "Chờ bàn giao",
+            "canceled": "Đã hủy đăng ký",
+            "deleted": "Đã xóa",
+            "pendingAllocationDelete": "Cấp phát chờ xóa",
+            "other": "Khác",
+            "notUpdated": "Chưa cập nhật"
+        },
+        "loading": "Đang tải dữ liệu...",
+        "noData": "Không có dữ liệu lịch sử thiết bị",
+        "messages": {
+            "loadError": "Không thể tải danh sách lịch sử thiết bị"
+        },
+        "pagination": {
+            "first": "Đầu tiên",
+            "previous": "Trước",
+            "next": "Tiếp",
+            "last": "Cuối cùng",
+            "showing": "Hiển thị {{start}} đến {{end}} trong tổng số {{total}} bản ghi"
+        }
+    },
+    "historyDetail": {
+        "title": "Chi tiết lịch sử thiết bị",
+        "backToList": "Quay lại danh sách",
+        "loading": "Đang tải thông tin chi tiết...",
+        "notFound": "Không tìm thấy thông tin chi tiết",
+        "tabs": {
+            "device": "Thông tin thiết bị",
+            "user": "Thông tin người sử dụng",
+            "note": "Ghi chú"
+        },
+        "deviceInfo": {
+            "title": "Thông tin thiết bị",
+            "assetCode": "Mã thiết bị",
+            "assetName": "Tên thiết bị",
+            "brand": "Thương hiệu",
+            "model": "Model",
+            "serialNumber": "Số serial",
+            "deviceType": "Loại thiết bị",
+            "deviceStatus": "Trạng thái thiết bị",
+            "status": "Trạng thái",
+            "os": "Hệ điều hành",
+            "office": "Office",
+            "softwareUsed": "Phần mềm sử dụng",
+            "configuration": "Cấu hình",
+            "maintenanceCycle": "Chu kỳ bảo trì",
+            "ipAddress": "Địa chỉ IP",
+            "macAddress": "MAC Address",
+            "hub": "Hub",
+            "vcsLanNo": "VCS LAN No",
+            "oldIp": "IP cũ",
+            "upgradeInfo": "Thông tin nâng cấp",
+            "startUseDate": "Ngày bắt đầu sử dụng",
+            "factoryArea": "Khu vực nhà máy",
+            "location": "Vị trí",
+            "purchaseDate": "Ngày mua",
+            "purchasePrice": "Giá mua",
+            "warrantyExpiry": "Hạn bảo hành"
+        },
+        "userInfo": {
+            "title": "Thông tin người sử dụng",
+            "employeeCode": "Mã nhân viên",
+            "employeeName": "Tên nhân viên",
+            "role": "Vai trò",
+            "mainUser": "Bàn giao chính",
+            "sharedUser": "Người dùng chung",
+            "department": "Phòng ban",
+            "handoverBy": "Người bàn giao",
+            "handoverByCode": "Mã người bàn giao",
+            "handoverDate": "Ngày bàn giao",
+            "returnDate": "Ngày trả",
+            "floor": "Tầng"
+        },
+        "note": {
+            "title": "Ghi chú",
+            "noNote": "Không có ghi chú"
+        },
+        "status": {
+            "registered": "Đã đăng ký",
+            "inUse": "Đang sử dụng",
+            "stopped": "Ngưng sử dụng",
+            "pendingHandover": "Chờ bàn giao",
+            "notHandover": "Chưa bàn giao",
+            "installing": "Đang cài đặt",
+            "changingDevice": "Đang đổi máy",
+            "pendingDelete": "Đang chờ xóa",
+            "returned": "Đã trả lại",
+            "new": "New",
+            "error": "Đang bị lỗi",
+            "pending": "Chưa bàn giao",
+            "replacing": "Đang đổi máy",
+            "disposed": "Chờ xóa",
+            "other": "Khác",
+            "canceled": "Đã hủy đăng ký",
+            "deleted": "Đã xóa",
+            "pendingAllocationDelete": "Cấp phát chờ xóa",
+            "notUpdated": "Chưa cập nhật"
+        }
+    },
+    "manageAssets": {
+        "title": "Quản lý thiết bị",
+        "search": {
+            "placeholder": "Tìm kiếm theo mã thiết bị..."
+        },
+        "addNewAsset": "Thêm thiết bị mới",
+        "filters": {
+            "status": "Trạng thái",
+            "allStatus": "Tất cả",
+            "category": "Loại thiết bị",
+            "allCategories": "Tất cả",
+            "assetCount": "{{count}} thiết bị"
+        },
+        "table": {
+            "assetCode": "Mã thiết bị",
+            "assetName": "Tên thiết bị",
+            "type": "Loại",
+            "status": "Trạng thái",
+            "department": "Phòng ban",
+            "deviceType": "Loại thiết bị",
+            "location": "Vị trí"
+        },
+        "modals": {
+            "detail": {
+                "title": "Chi tiết thiết bị",
+                "close": "Đóng",
+                "edit": "Chỉnh sửa"
+            },
+            "delete": {
+                "title": "Xác nhận xóa",
+                "message": "Bạn có chắc chắn muốn xóa thiết bị {{assetName}} ({{assetCode}})?",
+                "cancel": "Hủy",
+                "delete": "Xóa"
+            },
+            "add": {
+                "title": "Thêm thiết bị mới",
+                "required": "Các trường bắt buộc",
+                "fields": {
+                    "assetCode": "Mã thiết bị",
+                    "assetName": "Tên thiết bị",
+                    "category": "Loại thiết bị",
+                    "brand": "Thương hiệu",
+                    "os": "Hệ điều hành",
+                    "office": "Office",
+                    "softwareUsed": "Phần mềm sử dụng",
+                    "configuration": "Cấu hình",
+                    "model": "Model",
+                    "serialNumber": "Số serial",
+                    "type": "Loại",
+                    "ipAddress": "Địa chỉ IP",
+                    "macAddress": "Địa chỉ MAC",
+                    "hub": "Hub",
+                    "vcsLanNo": "VCS LAN No",
+                    "startUseDate": "Ngày bắt đầu sử dụng",
+                    "factoryArea": "Khu vực nhà máy",
+                    "department": "Phòng ban quản lý",
+                    "vendor": "Nhà cung cấp",
+                    "location": "Vị trí",
+                    "purchaseDate": "Ngày mua",
+                    "purchasePrice": "Giá mua",
+                    "warrantyExpiry": "Hạn bảo hành",
+                    "maintenanceCycle": "Chu kỳ bảo trì",
+                    "status": "Trạng thái",
+                    "upgradeInfo": "Thông tin nâng cấp",
+                    "notes": "Ghi chú",
+                    "oldIp": "IP cũ"
+                },
+                "buttons": {
+                    "cancel": "Hủy",
+                    "add": "Thêm mới"
+                }
+            }
+        },
+        "status": {
+            "inUse": "Đang sử dụng",
+            "registered": "Đã đăng ký",
+            "error": "Đang bị lỗi",
+            "pending": "Chưa bàn giao",
+            "installing": "Đang cài đặt",
+            "replacing": "Đang đổi máy",
+            "disposed": "Chờ xóa",
+            "canceled": "Đã hủy",
+            "deleted": "Đã xóa",
+            "returned": "Đã trả lại",
+            "stopped": "Ngưng sử dụng",
+            "pendingHandover": "Chờ bàn giao",
+            "pendingAllocationDelete": "Cấp phát chờ xóa",
+            "other": "Khác",
+            "new@locales ": "Máy mới"
+        },
+        "loading": "Đang tải danh sách thiết bị...",
+        "noData": "Không tìm thấy thiết bị nào phù hợp với bộ lọc",
+        "messages": {
+            "loadError": "Lỗi khi tải dữ liệu",
+            "deleteSuccess": "Xóa thiết bị thành công",
+            "deleteError": "Lỗi khi xóa thiết bị",
+            "addSuccess": "Thêm thiết bị mới thành công",
+            "addError": "Lỗi khi thêm thiết bị mới"
+        },
+        "pagination": {
+            "first": "Đầu tiên",
+            "previous": "Trước",
+            "next": "Tiếp",
+            "last": "Cuối cùng",
+            "showing": "Hiển thị {{start}} đến {{end}} trong tổng số {{total}} bản ghi"
+        }
+    },
+    "exportIP": {
+        "title": "Xuất IP",
+        "dateRange": {
+            "title": "Chọn khoảng thời gian",
+            "startDate": "Ngày bắt đầu",
+            "endDate": "Ngày kết thúc",
+            "search": "Tìm kiếm",
+            "loading": "Đang tải..."
+        },
+        "table": {
+            "registration": "Ngày đăng ký",
+            "vlan": "VLAN",
+            "hostName": "Tên máy chủ",
+            "ipType": "Loại IP",
+            "ipAddress": "Địa chỉ IP",
+            "macAddress": "Địa chỉ MAC",
+            "connectionDevices": "Thiết bị kết nối",
+            "deviceType": "Loại thiết bị",
+            "networkType": "Loại mạng",
+            "installationFloor": "Tầng lắp đặt",
+            "installationLocation": "Vị trí lắp đặt",
+            "use": "Mục đích sử dụng",
+            "status": "Trạng thái",
+            "remarks": "Ghi chú"
+        },
+        "export": {
+            "button": "Xuất Excel",
+            "noSelection": "Vui lòng chọn ít nhất một IP để xuất",
+            "error": "Lỗi xuất file. Vui lòng thử lại sau."
+        },
+        "errors": {
+            "dateRange": "Vui lòng chọn khoảng thời gian",
+            "invalidDateRange": "Ngày kết thúc không thể trước ngày bắt đầu",
+            "noData": "Không tìm thấy IP nào trong khoảng thời gian này",
+            "loadError": "Lỗi tải dữ liệu. Vui lòng thử lại sau."
+        }
+    },
+    "ipDivision": {
+        "title": "Phân chia IP",
+        "table": {
+            "smvSegment": "Phân đoạn SMV",
+            "no": "STT",
+            "networkAddress": "Địa chỉ mạng đang sử dụng",
+            "subnetMask": "Subnet Mask",
+            "defaultGateway": "Default Gateway",
+            "ipRange": "Dải IP",
+            "assignableHosts": "Số lượng host có thể cấp phát",
+            "vlanId": "Vlan-ID",
+            "managementL3": "Quản lý L3",
+            "ipType": "Loại IP",
+            "dhcpRange": "Dải DHCP",
+            "use": "Mục đích sử dụng",
+            "remark": "Ghi chú"
+        },
+        "notes": {
+            "reservation": "※Dành riêng",
+            "closed": "Đã đóng",
+            "nativeVlan": "Native VLAN",
+            "disableInternet": "※Vô hiệu hóa truy cập internet bằng ACL",
+            "dhcpFixedRange": "Dải DHCP & IP cố định được cấu hình bởi máy chủ DHCP",
+            "canSplit": "Có thể chia nhỏ tự do trong phạm vi /24",
+            "vlanPrimary": "Vlan164 - Primary",
+            "vlanSecondary": "Vlan164 - Secondary"
+        }
+    },
+    "ipHistory": {
+        "title": "Lịch sử IP",
+        "search": {
+            "placeholder": "Nhập địa chỉ IP",
+            "button": "Tìm kiếm lịch sử"
+        },
+        "loading": "Đang tải...",
+        "noData": {
+            "title": "Lịch sử cho IP: {{ip}}",
+            "message": "Không tìm thấy bản ghi lịch sử cho địa chỉ IP này",
+            "description": "Không có thay đổi nào được ghi nhận cho IP: {{ip}}"
+        },
+        "table": {
+            "registration": "Ngày đăng ký",
+            "vlan": "VLAN",
+            "hostName": "Tên máy chủ",
+            "ipType": "Loại IP",
+            "ipAddress": "Địa chỉ IP",
+            "macAddress": "Địa chỉ MAC",
+            "installationFloor": "Tầng lắp đặt",
+            "installationLocation": "Vị trí lắp đặt",
+            "use": "Mục đích sử dụng",
+            "action": "Hành động"
+        },
+        "actions": {
+            "assign": "Gán",
+            "edit": "Chỉnh sửa",
+            "delete": "Xóa"
+        },
+        "errors": {
+            "loadError": "Không thể tải lịch sử IP. Vui lòng thử lại."
+        }
+    },
+    "networkSegment": {
+        "title": "Phân đoạn mạng",
+        "filters": {
+            "title": "Bộ lọc",
+            "vlan": "VLAN",
+            "allVlans": "Tất cả VLAN",
+            "ipUsage": "Trạng thái IP",
+            "allUsage": "Tất cả",
+            "used": "Đã sử dụng",
+            "unused": "Chưa sử dụng",
+            "search": "Tìm kiếm",
+            "reset": "Đặt lại",
+            "counts": {
+                "all": "Tổng số: {{count}}",
+                "used": "Đã sử dụng: {{count}}",
+                "unused": "Chưa sử dụng: {{count}}"
+            }
+        },
+        "table": {
+            "registration": "Ngày đăng ký",
+            "vlan": "VLAN",
+            "hostName": "Tên máy chủ",
+            "ipType": "Loại IP",
+            "ipAddress": "Địa chỉ IP",
+            "macAddress": "Địa chỉ MAC",
+            "connectionDevices": "Thiết bị kết nối",
+            "deviceType": "Loại thiết bị",
+            "networkType": "Loại mạng",
+            "installationFloor": "Tầng lắp đặt",
+            "installationLocation": "Vị trí lắp đặt",
+            "use": "Sử dụng",
+            "status": "Trạng thái",
+            "remarks": "Ghi chú",
+            "actions": "Thao tác"
+        },
+        "actions": {
+            "assign": "Gán IP",
+            "edit": "Sửa",
+            "delete": "Xóa"
+        },
+        "modals": {
+            "delete": {
+                "title": "Xác nhận xóa",
+                "message": "Bạn có chắc chắn muốn xóa IP {{ip}}?",
+                "cancel": "Hủy",
+                "confirm": "Xóa",
+                "yes": "Có",
+                "no": "Không"
+            }
+        },
+        "select": {
+            "select": "Chọn",
+            "used": "Đã sử dụng",
+            "unused": "Chưa sử dụng"
+        },
+        "success": {
+            "save": "Lưu thành công",
+            "delete": "Xóa thành công"
+        },
+        "errors": {
+            "loadError": "Không thể tải dữ liệu. Vui lòng thử lại.",
+            "loadVlanError": "Không thể tải danh sách VLAN. Vui lòng thử lại.",
+            "loadRecordError": "Không thể tải thông tin IP. Vui lòng thử lại.",
+            "saveError": "Không thể lưu thông tin. Vui lòng thử lại.",
+            "deleteError": "Không thể xóa IP. Vui lòng thử lại.",
+            "requiredFields": "Vui lòng điền các trường bắt buộc"
+        },
+        "loading": "Đang tải..."
+    }
+}

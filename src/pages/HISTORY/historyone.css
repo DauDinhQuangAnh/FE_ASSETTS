@@ -1,0 +1,273 @@
+/* Header Section */
+.history-header {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.history-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.history-header-content h5 {
+  margin: 0;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Main Container */
+.history-container {
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 0.25rem;
+  border: 1px solid #ddd;
+}
+
+/* Filter Section */
+.history-filters {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 10px auto;
+  max-width: 100%;
+  min-width: 200px;
+}
+
+.history-filter-group {
+  min-width: 200px;
+}
+
+.history-search-container {
+  flex: 1;
+  min-width: 400px;
+  max-width: 1000px;
+  padding-left: 220px;
+}
+
+.history-search-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #333;
+  background-color: #fff;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.history-search-input:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.history-search-input:focus {
+  border-color: #2b5974;
+  box-shadow: 0 4px 12px rgba(43, 89, 116, 0.2);
+  outline: none;
+}
+
+.history-refresh-btn {
+  margin-left: auto;
+}
+
+/* Button Styles */
+.history-btn {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.history-btn:hover {
+  background-color: #e9ecef;
+  border-color: #ccc;
+}
+
+.history-btn i {
+  color: #3c8dbc;
+}
+
+/* Table Section */
+.history-table-container {
+  margin-top: 1rem;
+  overflow-x: auto;
+  width: 100%;
+}
+
+.history-table {
+  width: 100%;
+  margin-bottom: 1rem;
+  table-layout: fixed;
+  min-width: 1200px;
+}
+
+.history-table th,
+.history-table td {
+  padding: 0.75rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #dee2e6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+/* Column Widths */
+.history-table th:nth-child(1), /* Mã thiết bị */
+.history-table td:nth-child(1) {
+  width: 100px;
+}
+
+.history-table th:nth-child(2), /* Tên thiết bị */
+.history-table td:nth-child(2) {
+  width: 120px;
+}
+
+.history-table th:nth-child(3), /* Mã nhân viên */
+.history-table td:nth-child(3) {
+  width: 130px;
+}
+
+.history-table th:nth-child(4), /* Tên nhân viên */
+.history-table td:nth-child(4) {
+  width: 200px;
+}
+
+.history-table th:nth-child(5), /* Người bàn giao */
+.history-table td:nth-child(5) {
+  width: 200px;
+}
+
+.history-table th:nth-child(6), /* Phòng ban */
+.history-table td:nth-child(6) {
+  width: 140px;
+}
+
+.history-table th:nth-child(7), /* Trạng thái */
+.history-table td:nth-child(7) {
+  width: 130px;
+}
+
+.history-table th:nth-child(8), /* Ngày bàn giao */
+.history-table td:nth-child(8) {
+  width: 140px;
+}
+
+.history-table th:nth-child(9), /* Ngày trả */
+.history-table td:nth-child(9) {
+  width: 60px;
+}
+
+.history-table th:nth-child(10), /* Tầng */
+.history-table td:nth-child(10) {
+  width: 140px;
+}
+
+.history-table th:nth-child(11), /* Vị trí */
+.history-table td:nth-child(11) {
+  width: 160px;
+}
+
+.history-table th:nth-child(12), /* MAC Address */
+.history-table td:nth-child(12) {
+  width: 150px;
+}
+
+.history-table th:nth-child(13), /* Ghi chú */
+.history-table td:nth-child(13) {
+  width: 200px;
+}
+
+.history-table-row:hover {
+  background-color: #f8f9fa;
+}
+
+.history-table-row:hover td {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+/* Badge Styles */
+.history-badge {
+  font-weight: 500;
+  padding: 0.4em 0.6em;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.history-badge.bg-info {
+  background-color: #17a2b8 !important;
+  color: white;
+}
+
+.history-badge.bg-success {
+  background-color: #28a745 !important;
+  color: white;
+}
+
+.history-badge.bg-warning {
+  background-color: #ffc107 !important;
+  color: #212529;
+}
+
+.history-badge.bg-danger {
+  background-color: #dc3545 !important;
+  color: white;
+}
+
+.history-badge.bg-secondary {
+  background-color: #6c757d !important;
+  color: white;
+}
+
+/* Alert Styles */
+.history-alert {
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Loading Spinner */
+.history-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .history-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .history-filter-group,
+  .history-search-container,
+  .history-refresh-btn {
+    width: 100%;
+    margin: 0 0 1rem 0;
+  }
+
+  .history-search-container {
+    max-width: 100%;
+  }
+
+  .history-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .history-table {
+    min-width: 1200px;
+  }
+}

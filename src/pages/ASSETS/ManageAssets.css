@@ -1,0 +1,112 @@
+.header-section {
+  background-color: #345d75;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-content h5 {
+  color: white;
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.filter-section {
+  background-color: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table-section {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  display: inline-block;
+}
+
+.status-badge.available {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.in-use {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-badge.maintenance {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.status-badge.broken {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.status-badge.disposed {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+/* Table styles */
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.table tbody tr {
+  cursor: pointer;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .header-content h5 {
+    margin-bottom: 10px;
+  }
+
+  .table-responsive {
+    margin-bottom: 0;
+  }
+}

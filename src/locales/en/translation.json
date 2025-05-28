@@ -1,0 +1,882 @@
+{
+    "header": {
+        "generalManagement": "General Management",
+        "userManagement": "User Management",
+        "assetManagement": "Asset Management",
+        "repairManagement": "Repair Management",
+        "ipManagement": "IP Management",
+        "networkSegment": "Network Segment",
+        "ipDivision": "IP Division",
+        "exportIP": "Export IP",
+        "ipHistory": "IP History",
+        "script": "Script",
+        "createADUser": "Create ADUser and DHCP",
+        "setLogon": "Set LogOn",
+        "deleteUser": "Delete User",
+        "addGroupMail": "Add Group Mail",
+        "changeUserInfo": "Change User Info",
+        "createShareFile": "Create Share File",
+        "deleteDHCP": "Delete DHCP",
+        "historyStatus": "History Status",
+        "admin": "Administrator",
+        "user": "User",
+        "logout": "Logout",
+        "backToList": "Back to List",
+        "search": "Search",
+        "filter": "Filter",
+        "actions": "Actions",
+        "edit": "Edit",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "save": "Save",
+        "confirm": "Confirm",
+        "warning": "Warning",
+        "success": "Success",
+        "error": "Error",
+        "loading": "Loading...",
+        "noData": "No data available",
+        "welcome": "Welcome",
+        "profile": "Profile",
+        "settings": "Settings",
+        "language": "Language",
+        "vietnamese": "Vietnamese",
+        "english": "English",
+        "darkMode": "Dark Mode",
+        "lightMode": "Light Mode",
+        "notification": "Notification",
+        "messages": "Messages",
+        "viewAll": "View All",
+        "markAsRead": "Mark as Read",
+        "clearAll": "Clear All",
+        "newMessage": "New Message",
+        "noNotifications": "No notifications",
+        "noMessages": "No messages",
+        "lastLogin": "Last Login",
+        "version": "Version",
+        "copyright": "Copyright",
+        "poweredBy": "Powered by",
+        "support": "Support",
+        "help": "Help",
+        "about": "About",
+        "contact": "Contact",
+        "terms": "Terms",
+        "privacy": "Privacy",
+        "status": {
+            "online": "Online",
+            "offline": "Offline",
+            "away": "Away",
+            "busy": "Busy"
+        }
+    },
+    "dashboard": {
+        "title": "SMV Device Management System",
+        "subtitle": "Comprehensive solution for managing and tracking devices in the organization",
+        "carousel": {
+            "title": "Smart Device Management",
+            "description": "Comprehensive solution for device tracking and management"
+        },
+        "stats": {
+            "title": "Overview Statistics",
+            "totalDevices": "Total Devices",
+            "inUse": "In Use",
+            "installing": "Installing",
+            "pendingDelete": "Pending Delete"
+        },
+        "features": {
+            "title": "Core Features",
+            "viewDetails": "View Details",
+            "assetManagement": {
+                "title": "Asset Management",
+                "description": "Monitor and manage all devices in the organization"
+            },
+            "userManagement": {
+                "title": "User Management",
+                "description": "Manage users and control access permissions"
+            },
+            "assetHistory": {
+                "title": "Asset History",
+                "description": "View the change history of devices"
+            },
+            "segmentList": {
+                "title": "Segment List",
+                "description": "View the list of network segments"
+            },
+            "exportIP": {
+                "title": "Export IP",
+                "description": "Export the list of assigned IP addresses"
+            },
+            "ipHistory": {
+                "title": "IP History",
+                "description": "View the change history of IP addresses"
+            }
+        },
+        "deviceTypes": {
+            "title": "Device Types",
+            "computer": "Computer",
+            "phone": "Phone",
+            "tablet": "Tablet",
+            "server": "Server",
+            "networkDevice": "Network Device",
+            "printer": "Printer",
+            "headphone": "Headphone",
+            "keyboard": "Keyboard",
+            "mouse": "Mouse"
+        },
+        "loading": "Loading..."
+    },
+    "manageUser": {
+        "title": "User Management List",
+        "searchPlaceholder": "Search by employee code, full name or email...",
+        "addNewUser": "Add New User",
+        "backToList": "Back to List",
+        "filters": {
+            "status": "Status",
+            "allStatus": "All Status",
+            "businessUnit": "Business Unit (BU)",
+            "allBusinessUnits": "All Business Units",
+            "department": "Department",
+            "allDepartments": "All Departments",
+            "position": "Position",
+            "allPositions": "All Positions",
+            "loadingDepartments": "Loading departments..."
+        },
+        "table": {
+            "employeeCode": "Employee Code",
+            "fullName": "Full Name",
+            "email": "Email",
+            "businessUnit": "Business Unit",
+            "department": "Department",
+            "position": "Position",
+            "status": "Status",
+            "noUsersFound": "No users found matching the filters",
+            "loading": "Loading user list..."
+        },
+        "userDetail": {
+            "title": "User Details",
+            "basicInfo": {
+                "firstName": "First Name",
+                "lastName": "Last Name",
+                "employeeCode": "Employee Code",
+                "email": "Email",
+                "businessUnit": "Business Unit (BU)",
+                "department": "Department",
+                "position": "Position",
+                "role": "Role",
+                "joinDate": "Join Date",
+                "leaveDate": "Leave Date",
+                "notResigned": "Not Resigned",
+                "note": "Note",
+                "noNote": "No note"
+            },
+            "editInfo": "Edit Information",
+            "assets": {
+                "title": "Assigned Devices",
+                "noAssets": "No devices assigned to this user",
+                "columns": {
+                    "assetCode": "Asset Code",
+                    "assetName": "Asset Name",
+                    "type": "Type",
+                    "status": "Status",
+                    "handoverDate": "Handover Date"
+                }
+            }
+        },
+        "modals": {
+            "createUser": {
+                "title": "Add New User",
+                "requiredFields": "Required Fields",
+                "fields": {
+                    "employeeCode": "Employee Code",
+                    "email": "Email",
+                    "firstName": "First Name",
+                    "lastName": "Last Name",
+                    "password": "Password",
+                    "role": "Role",
+                    "businessUnit": "Business Unit (BU)",
+                    "department": "Department",
+                    "position": "Position",
+                    "joinDate": "Join Date",
+                    "workStatus": "Work Status",
+                    "note": "Note"
+                },
+                "selectBusinessUnitFirst": "Please select business unit first",
+                "buttons": {
+                    "cancel": "Cancel",
+                    "create": "Create Account",
+                    "creating": "Creating..."
+                }
+            },
+            "editUser": {
+                "title": "Edit User Information",
+                "buttons": {
+                    "cancel": "Cancel",
+                    "save": "Save Changes",
+                    "saving": "Saving..."
+                }
+            },
+            "assetDetail": {
+                "title": "Asset Details",
+                "loading": "Loading asset details...",
+                "fields": {
+                    "assetCode": "Asset Code",
+                    "assetName": "Asset Name",
+                    "deviceType": "Device Type",
+                    "brand": "Brand",
+                    "model": "Model",
+                    "serialNumber": "Serial Number",
+                    "os": "Operating System",
+                    "office": "Office",
+                    "configuration": "Configuration",
+                    "ipAddress": "IP Address",
+                    "macAddress": "MAC Address",
+                    "hub": "Hub",
+                    "vcsLan": "VCS LAN",
+                    "factoryArea": "Factory Area",
+                    "location": "Location"
+                },
+                "close": "Close"
+            }
+        },
+        "status": {
+            "working": "Working",
+            "onLeave": "On Leave",
+            "resigned": "Resigned"
+        },
+        "roles": {
+            "admin": "Admin",
+            "user": "User"
+        },
+        "messages": {
+            "userCreated": "User {{empCode}} and storage folder created successfully",
+            "folderExists": "Folder already exists",
+            "userUpdated": "User updated successfully!",
+            "searchAgain": "Please search again using employee code"
+        },
+        "pagination": {
+            "showing": "Showing",
+            "of": "of",
+            "entries": "entries"
+        }
+    },
+    "addGroupMail": {
+        "title": "ADD_Group_Mail List",
+        "exportCSV": "Export CSV",
+        "addRow": "Add Row",
+        "table": {
+            "stt": "STT",
+            "samAccountName": "SamAccountName",
+            "name": "Name",
+            "identity": "Identity",
+            "actions": "Actions"
+        },
+        "placeholders": {
+            "empCode": "Enter emp_code",
+            "mailGroup": "Select Mail Group"
+        },
+        "messages": {
+            "userNotFound": "User information not found",
+            "fetchError": "Error fetching user information"
+        }
+    },
+    "setLogon": {
+        "title": "Set LogOn List",
+        "exportCSV": "Export CSV",
+        "complete": "Complete",
+        "updating": "Updating...",
+        "table": {
+            "stt": "STT",
+            "firstname": "firstname",
+            "lastname": "lastname",
+            "id": "id",
+            "oldpc": "oldpc",
+            "newpc": "newpc",
+            "buName": "BUName"
+        },
+        "placeholders": {
+            "oldpc": "Enter oldpc"
+        },
+        "modal": {
+            "title": "Confirm Completion",
+            "warning": "Have you run the Set LogOn and DHCP scripts?",
+            "description": "Please ensure you have run the scripts before updating the status.",
+            "buttons": {
+                "checkAgain": "No, let me check again",
+                "proceed": "Yes, proceed with update"
+            }
+        },
+        "messages": {
+            "loadError": "Cannot load AD Users list",
+            "updateSuccess": "Status updated successfully",
+            "updateError": "Error updating status"
+        }
+    },
+    "deleteUser": {
+        "title": "Pending User Deletion List",
+        "exportCSV": "Export CSV",
+        "complete": "Complete",
+        "updating": "Updating...",
+        "table": {
+            "stt": "STT",
+            "username": "Username",
+            "email": "Email"
+        },
+        "messages": {
+            "loadError": "Cannot load user list",
+            "updateSuccess": "Status updated successfully",
+            "updateError": "Error updating status"
+        }
+    },
+    "deleteDHCP": {
+        "title": "Delete_DHCP_Reservation List",
+        "exportCSV": "Export CSV",
+        "complete": "Complete",
+        "updating": "Updating...",
+        "table": {
+            "stt": "STT",
+            "ip": "IP",
+            "mac": "Mac",
+            "hostname": "Hostname",
+            "description": "Description",
+            "scopeID": "ScopeID",
+            "bu": "BU"
+        },
+        "placeholders": {
+            "ip": "Enter IP"
+        },
+        "modal": {
+            "title": "Confirm Completion",
+            "warning": "Have you run the DHCP script?",
+            "description": "Please ensure you have run the script before updating the status.",
+            "buttons": {
+                "checkAgain": "No, let me check again",
+                "proceed": "Yes, proceed with update"
+            }
+        },
+        "messages": {
+            "loadError": "Cannot load DHCP Users list",
+            "updateSuccess": "Status updated successfully",
+            "updateError": "Error updating status"
+        }
+    },
+    "createShareFile": {
+        "title": "Create_ShareFile List",
+        "exportCSV": "Export CSV",
+        "addRow": "Add Create Share File Row",
+        "table": {
+            "stt": "STT",
+            "localUser": "LocalUser",
+            "password": "Password",
+            "description": "Description",
+            "fullName": "FullName",
+            "groupName": "GroupName",
+            "actions": "Actions"
+        },
+        "placeholders": {
+            "id": "Enter ID",
+            "groupName": "Select Group Name"
+        },
+        "modal": {
+            "title": "Confirm Export",
+            "description": "Are you sure you want to export Create Share File data?",
+            "buttons": {
+                "cancel": "Cancel",
+                "export": "Export"
+            }
+        },
+        "messages": {
+            "userNotFound": "User information not found",
+            "fetchError": "Error fetching user information"
+        }
+    },
+    "changeInforUser": {
+        "title": "Change User Information List",
+        "exportCSV": "Export CSV",
+        "addRow": "Add Row",
+        "table": {
+            "stt": "STT",
+            "id": "ID",
+            "fullName": "Full Name",
+            "jobTitle": "Job Title",
+            "department": "Department",
+            "actions": "Actions"
+        },
+        "placeholders": {
+            "id": "Enter ID"
+        },
+        "messages": {
+            "userNotFound": "User information not found",
+            "fetchError": "Error fetching user information"
+        }
+    },
+    "createADUser": {
+        "title": "Create_ADUsers List",
+        "exportCSV": "Export CSV",
+        "complete": "Complete",
+        "updating": "Updating...",
+        "table": {
+            "stt": "STT",
+            "firstname": "firstname",
+            "lastname": "lastname",
+            "username": "Username",
+            "email": "Email",
+            "department": "department",
+            "jobtitle": "jobtitle",
+            "workstation": "Workstation",
+            "description": "description"
+        },
+        "deviceInfo": {
+            "title": "Create_DHCP_Reservation List",
+            "table": {
+                "stt": "STT",
+                "ip": "IP",
+                "mac": "Mac",
+                "hostname": "Hostname",
+                "description": "Description",
+                "scopeID": "ScopeID",
+                "bu": "BU"
+            },
+            "placeholders": {
+                "ip": "Enter IP"
+            }
+        },
+        "groupMail": {
+            "title": "ADD_Group_Mail List",
+            "table": {
+                "stt": "STT",
+                "samAccountName": "SamAccountName",
+                "name": "Name",
+                "identity": "Identity"
+            },
+            "placeholders": {
+                "mailGroup": "Select Mail Group"
+            }
+        },
+        "shareFile": {
+            "title": "Create Share File List",
+            "table": {
+                "stt": "STT",
+                "localUser": "LocalUser",
+                "password": "Password",
+                "description": "Description",
+                "fullName": "FullName",
+                "groupName": "GroupName"
+            }
+        },
+        "modal": {
+            "title": "Confirm Completion",
+            "warning": "Have you run the Add User and DHCP scripts?",
+            "description": "Please ensure you have run the scripts before updating the status.",
+            "buttons": {
+                "checkAgain": "No, let me check again",
+                "proceed": "Yes, proceed with update"
+            }
+        },
+        "messages": {
+            "loadError": "Cannot load AD Users list",
+            "updateSuccess": "Status updated successfully",
+            "updateError": "Error updating status"
+        }
+    },
+    "historyone": {
+        "title": "Asset History",
+        "filters": {
+            "allStatus": "All Status",
+            "registered": "Registered",
+            "inUse": "In Use",
+            "pendingHandover": "Pending Handover",
+            "pendingDelete": "Pending Delete",
+            "pendingAllocationDelete": "Allocation Pending Delete",
+            "canceled": "Canceled",
+            "other": "Other"
+        },
+        "search": {
+            "placeholder": "Search by asset code, asset name, employee code or employee name..."
+        },
+        "refresh": "Refresh",
+        "table": {
+            "assetCode": "Asset Code",
+            "assetName": "Asset Name",
+            "employeeCode": "Employee Code",
+            "employeeName": "Employee Name",
+            "handoverBy": "Handover By",
+            "status": "Status",
+            "handoverDate": "Handover Date",
+            "returnDate": "Return Date",
+            "floor": "Floor",
+            "note": "Note"
+        },
+        "status": {
+            "registered": "Registered",
+            "inUse": "In Use",
+            "stopped": "Stopped",
+            "pendingDelete": "Pending Delete",
+            "returned": "Returned",
+            "pendingHandover": "Pending Handover",
+            "canceled": "Registration Canceled",
+            "deleted": "Deleted",
+            "pendingAllocationDelete": "Allocation Pending Delete",
+            "other": "Other",
+            "notUpdated": "Not Updated"
+        },
+        "loading": "Loading data...",
+        "noData": "No asset history data available",
+        "messages": {
+            "loadError": "Cannot load asset history list"
+        },
+        "pagination": {
+            "first": "First",
+            "previous": "Previous",
+            "next": "Next",
+            "last": "Last",
+            "showing": "Showing {{start}} to {{end}} of {{total}} records"
+        }
+    },
+    "historyDetail": {
+        "title": "Asset History Detail",
+        "backToList": "Back to List",
+        "loading": "Loading details...",
+        "notFound": "Details not found",
+        "tabs": {
+            "device": "Device Information",
+            "user": "User Information",
+            "note": "Notes"
+        },
+        "deviceInfo": {
+            "title": "Device Information",
+            "assetCode": "Asset Code",
+            "assetName": "Asset Name",
+            "brand": "Brand",
+            "model": "Model",
+            "serialNumber": "Serial Number",
+            "deviceType": "Device Type",
+            "deviceStatus": "Device Status",
+            "status": "Status",
+            "os": "Operating System",
+            "office": "Office",
+            "softwareUsed": "Software Used",
+            "configuration": "Configuration",
+            "maintenanceCycle": "Maintenance Cycle",
+            "ipAddress": "IP Address",
+            "macAddress": "MAC Address",
+            "hub": "Hub",
+            "vcsLanNo": "VCS LAN No",
+            "oldIp": "Old IP",
+            "upgradeInfo": "Upgrade Information",
+            "startUseDate": "Start Use Date",
+            "factoryArea": "Factory Area",
+            "location": "Location",
+            "purchaseDate": "Purchase Date",
+            "purchasePrice": "Purchase Price",
+            "warrantyExpiry": "Warranty Expiry"
+        },
+        "userInfo": {
+            "title": "User Information",
+            "employeeCode": "Employee Code",
+            "employeeName": "Employee Name",
+            "role": "Role",
+            "mainUser": "Main User",
+            "sharedUser": "Shared User",
+            "department": "Department",
+            "handoverBy": "Handover By",
+            "handoverByCode": "Handover By Code",
+            "handoverDate": "Handover Date",
+            "returnDate": "Return Date",
+            "floor": "Floor"
+        },
+        "note": {
+            "title": "Notes",
+            "noNote": "No notes"
+        },
+        "status": {
+            "registered": "Registered",
+            "inUse": "In Use",
+            "stopped": "Stopped",
+            "pendingHandover": "Pending Handover",
+            "notHandover": "Not Handover",
+            "installing": "Installing",
+            "changingDevice": "Changing Device",
+            "pendingDelete": "Pending Delete",
+            "returned": "Returned",
+            "new": "New",
+            "canceled": "Canceled",
+            "deleted": "Deleted",
+            "pendingAllocationDelete": "Pending Allocation Delete",
+            "other": "Other",
+            "notUpdated": "Not Updated"
+        }
+    },
+    "manageAssets": {
+        "title": "Assets Management",
+        "search": {
+            "placeholder": "Search by asset code..."
+        },
+        "addNewAsset": "Add New Asset",
+        "filters": {
+            "status": "Status",
+            "allStatus": "All",
+            "category": "Asset Type",
+            "allCategories": "All",
+            "assetCount": "{{count}} assets"
+        },
+        "table": {
+            "assetCode": "Asset Code",
+            "assetName": "Asset Name",
+            "type": "Type",
+            "status": "Status",
+            "department": "Department",
+            "deviceType": "Device Type",
+            "location": "Location"
+        },
+        "modals": {
+            "detail": {
+                "title": "Asset Details",
+                "close": "Close",
+                "edit": "Edit"
+            },
+            "delete": {
+                "title": "Confirm Delete",
+                "message": "Are you sure you want to delete asset {{assetName}} ({{assetCode}})?",
+                "cancel": "Cancel",
+                "delete": "Delete"
+            },
+            "add": {
+                "title": "Add New Asset",
+                "required": "Required fields",
+                "fields": {
+                    "assetCode": "Asset Code",
+                    "assetName": "Asset Name",
+                    "category": "Asset Type",
+                    "brand": "Brand",
+                    "os": "Operating System",
+                    "office": "Office",
+                    "softwareUsed": "Software Used",
+                    "configuration": "Configuration",
+                    "model": "Model",
+                    "serialNumber": "Serial Number",
+                    "type": "Type",
+                    "ipAddress": "IP Address",
+                    "macAddress": "MAC Address",
+                    "hub": "Hub",
+                    "vcsLanNo": "VCS LAN No",
+                    "startUseDate": "Start Use Date",
+                    "factoryArea": "Factory Area",
+                    "department": "Managing Department",
+                    "vendor": "Vendor",
+                    "location": "Location",
+                    "purchaseDate": "Purchase Date",
+                    "purchasePrice": "Purchase Price",
+                    "warrantyExpiry": "Warranty Expiry",
+                    "maintenanceCycle": "Maintenance Cycle",
+                    "status": "Status",
+                    "upgradeInfo": "Upgrade Information",
+                    "notes": "Notes",
+                    "oldIp": "Old IP"
+                },
+                "buttons": {
+                    "cancel": "Cancel",
+                    "add": "Add New"
+                }
+            }
+        },
+        "status": {
+            "inUse": "In Use",
+            "registered": "Registered",
+            "error": "Error",
+            "pending": "Pending",
+            "installing": "Installing",
+            "replacing": "Replacing",
+            "disposed": "Pending Delete",
+            "canceled": "Canceled",
+            "deleted": "Deleted",
+            "returned": "Returned",
+            "stopped": "Stopped",
+            "pendingHandover": "Pending Handover",
+            "new@locales ": "New",
+            "pendingAllocationDelete": "Pending Allocation Delete",
+            "other": "Other"
+        },
+        "loading": "Loading assets list...",
+        "noData": "No assets found matching the filters",
+        "messages": {
+            "loadError": "Error loading data",
+            "deleteSuccess": "Asset deleted successfully",
+            "deleteError": "Error deleting asset",
+            "addSuccess": "New asset added successfully",
+            "addError": "Error adding new asset"
+        },
+        "pagination": {
+            "first": "First",
+            "previous": "Previous",
+            "next": "Next",
+            "last": "Last",
+            "showing": "Showing {{start}} to {{end}} of {{total}} records"
+        }
+    },
+    "exportIP": {
+        "title": "Export IP",
+        "dateRange": {
+            "title": "Date Range Selection",
+            "startDate": "Start Date",
+            "endDate": "End Date",
+            "search": "Search",
+            "loading": "Loading..."
+        },
+        "table": {
+            "registration": "Registration",
+            "vlan": "VLAN",
+            "hostName": "Host Name",
+            "ipType": "IP Type",
+            "ipAddress": "IP Address",
+            "macAddress": "MAC Address",
+            "connectionDevices": "Connection Devices",
+            "deviceType": "Device Type",
+            "networkType": "Network Type",
+            "installationFloor": "Installation Floor",
+            "installationLocation": "Installation Location",
+            "use": "Use",
+            "status": "Status",
+            "remarks": "Remarks"
+        },
+        "export": {
+            "button": "Export Excel",
+            "noSelection": "Please select at least one IP to export",
+            "error": "Error exporting file. Please try again later."
+        },
+        "errors": {
+            "dateRange": "Please select date range",
+            "invalidDateRange": "End date cannot be before start date",
+            "noData": "No IPs found in this date range",
+            "loadError": "Error loading data. Please try again later."
+        }
+    },
+    "ipDivision": {
+        "title": "IP Division",
+        "table": {
+            "smvSegment": "SMV Segment",
+            "no": "No",
+            "networkAddress": "Network address actually used",
+            "subnetMask": "Subnet Mask",
+            "defaultGateway": "Default Gateway",
+            "ipRange": "IP Range",
+            "assignableHosts": "Number of assignable hosts",
+            "vlanId": "Vlan-ID",
+            "managementL3": "Management L3",
+            "ipType": "IP Type",
+            "dhcpRange": "DHCP Range",
+            "use": "Use",
+            "remark": "Remark"
+        },
+        "notes": {
+            "reservation": "※Reservation",
+            "closed": "Closed",
+            "nativeVlan": "Native VLAN",
+            "disableInternet": "※Disable Internet access with ACL",
+            "dhcpFixedRange": "DHCP & fixed IP range set by DHCP server",
+            "canSplit": "Can be split freely within the range of /24",
+            "vlanPrimary": "Vlan164 - Primary",
+            "vlanSecondary": "Vlan164 - Secondary"
+        }
+    },
+    "ipHistory": {
+        "title": "IP History",
+        "search": {
+            "placeholder": "Enter IP address",
+            "button": "Search History"
+        },
+        "loading": "Loading...",
+        "noData": {
+            "title": "History for IP: {{ip}}",
+            "message": "No history records found for this IP address",
+            "description": "No changes have been recorded for IP: {{ip}}"
+        },
+        "table": {
+            "registration": "Registration Date",
+            "vlan": "VLAN",
+            "hostName": "Host Name",
+            "ipType": "IP Type",
+            "ipAddress": "IP Address",
+            "macAddress": "MAC Address",
+            "installationFloor": "Installation Floor",
+            "installationLocation": "Installation Location",
+            "use": "Usage",
+            "action": "Action"
+        },
+        "actions": {
+            "assign": "Assign",
+            "edit": "Edit",
+            "delete": "Delete"
+        },
+        "errors": {
+            "loadError": "Unable to load IP history. Please try again."
+        }
+    },
+    "networkSegment": {
+        "title": "Network Segment",
+        "filters": {
+            "title": "Filters",
+            "vlan": "VLAN",
+            "allVlans": "All VLANs",
+            "ipUsage": "IP Status",
+            "allUsage": "All",
+            "used": "Used",
+            "unused": "Unused",
+            "search": "Search",
+            "reset": "Reset",
+            "counts": {
+                "all": "Total: {{count}}",
+                "used": "Used: {{count}}",
+                "unused": "Unused: {{count}}"
+            }
+        },
+        "table": {
+            "registration": "Registration Date",
+            "vlan": "VLAN",
+            "hostName": "Host Name",
+            "ipType": "IP Type",
+            "ipAddress": "IP Address",
+            "macAddress": "MAC Address",
+            "connectionDevices": "Connection Devices",
+            "deviceType": "Device Type",
+            "networkType": "Network Type",
+            "installationFloor": "Installation Floor",
+            "installationLocation": "Installation Location",
+            "use": "Use",
+            "status": "Status",
+            "remarks": "Remarks",
+            "actions": "Actions"
+        },
+        "actions": {
+            "assign": "Assign IP",
+            "edit": "Edit",
+            "delete": "Delete"
+        },
+        "modals": {
+            "delete": {
+                "title": "Confirm Delete",
+                "message": "Are you sure you want to delete IP {{ip}}?",
+                "cancel": "Cancel",
+                "confirm": "Delete",
+                "yes": "Yes",
+                "no": "No"
+            }
+        },
+        "select": {
+            "select": "Select",
+            "used": "Used",
+            "unused": "Unused"
+        },
+        "success": {
+            "save": "Saved successfully",
+            "delete": "Deleted successfully"
+        },
+        "errors": {
+            "loadError": "Unable to load data. Please try again.",
+            "loadVlanError": "Unable to load VLAN list. Please try again.",
+            "loadRecordError": "Unable to load IP information. Please try again.",
+            "saveError": "Unable to save information. Please try again.",
+            "deleteError": "Unable to delete IP. Please try again.",
+            "requiredFields": "Please fill in the required fields"
+        },
+        "loading": "Loading..."
+    }
+}

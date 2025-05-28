@@ -1,0 +1,178 @@
+/* Container chung */
+.history-detail-container {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  /* Phần header */
+  .history-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 1rem;
+  }
+  
+  .history-detail-header .page-title {
+    margin: 0;
+    color: #2b5974;
+    font-weight: 700;
+    font-size: 1.4rem;
+  }
+  
+  /* Tabs */
+  .custom-tabs .nav-link {
+    font-weight: 600;
+    color: #495057;
+    transition: color 0.3s ease;
+  }
+  
+  .custom-tabs .nav-link.active,
+  .custom-tabs .nav-link.active:hover,
+  .custom-tabs .nav-link:focus,
+  .custom-tabs .nav-link:hover {
+    color: #2b5974;
+    background-color: #e7f1f6;
+    border: none;
+    border-bottom: 3px solid #436e8c; /* viền dưới tab đang chọn */
+  }
+  
+  .custom-tabs .nav-item {
+    margin-bottom: -1px; /* để border-bottom tab đè đúng vị trí */
+  }
+  
+  /* Card chung */
+  .history-detail-card {
+    border: none;
+    border-radius: 0.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* Tạo animation fadeIn */
+    opacity: 0;
+    animation: fadeInCard 0.4s forwards ease-in-out;
+  }
+  
+  .history-detail-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Header gradient cho Card */
+  .card-header-gradient {
+    background: linear-gradient(135deg, #2b5974 0%, #436e8c 100%);
+    color: #fff;
+    border-bottom: none;
+    padding: 1rem;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+  }
+  
+  /* Phần Body card */
+  .history-detail-card .card-body {
+    padding: 1.5rem;
+    background-color: #fff;
+  }
+  
+  /* Các item hiển thị thông tin */
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    /* gap: 42px; */
+    padding-bottom: 20px; 
+  }
+  
+  .info-item label {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.88rem;
+  }
+  
+  .info-item span {
+    color: #2b5974;
+    font-size: 0.95rem;
+  }
+  
+  /* Nhấn mạnh một chút */
+  .info-item .highlight {
+    color: #bf1650; /* màu khác để tạo điểm nhấn */
+    font-weight: 700;
+  }
+  
+  .history-detail-note {
+    padding: 1rem;
+    background-color: #f1f3f5;
+    border-radius: 0.25rem;
+    min-height: 100px;
+    color: #495057;
+    line-height: 1.5;
+  }
+  
+  /* Badge trạng thái */
+  .history-badge {
+    font-weight: 500;
+    padding: 0.45em 0.65em;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    min-width: 100px;
+    text-align: center;
+  }
+  
+  /* Hiệu ứng fadeIn cho card */
+  @keyframes fadeInCard {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Animation helper */
+  .animate-fadeIn {
+    animation: fadeInCard 0.4s forwards ease-in-out;
+  }
+  
+  /* Trạng thái Badge */
+  .history-badge.bg-info {
+    background-color: #17a2b8 !important;
+    color: white;
+  }
+  
+  .history-badge.bg-success {
+    background-color: #28a745 !important;
+    color: white;
+  }
+  
+  .history-badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #212529;
+  }
+  
+  .history-badge.bg-danger {
+    background-color: #dc3545 !important;
+    color: white;
+  }
+  
+  .history-badge.bg-secondary {
+    background-color: #6c757d !important;
+    color: white;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .history-detail-container {
+      padding: 1rem;
+    }
+  
+    .history-detail-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+    }
+  }
+  

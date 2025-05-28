@@ -13,7 +13,6 @@ import SetLogOn from './pages/SCRIPT/SetLogOn';
 import DeleteUser from './pages/SCRIPT/DeleteUser';
 import ManageRepairs from './pages/ManageRepairs';
 import DeleteDHCP from './pages/SCRIPT/DELETE_DHCP';
-import ConsolidatedScripts from './pages/SCRIPT/ConsolidatedScripts';
 
 // Import IP Management pages
 import NetworkSegmentPage from './pages/IP_magement/NetworkSegmentPage';
@@ -70,7 +69,6 @@ export default function AppRoutes() {
           <Route path="/script/set-logon" element={<SetLogOn />} />
           <Route path="/script/delete-user" element={<DeleteUser />} />
           <Route path="/script/delete-dhcp" element={<DeleteDHCP />} />
-          <Route path="/script/consolidated" element={<ConsolidatedScripts />} />
         </Route>
       </Route>
 

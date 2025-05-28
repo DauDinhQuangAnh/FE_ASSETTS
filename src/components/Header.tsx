@@ -96,10 +96,6 @@ export default function Header() {
                   <i className="fas fa-trash-alt me-2"></i>
                   {t('header.deleteDHCP')}
                 </Dropdown.Item>
-                <Dropdown.Item as={Link} to="/script/consolidated" className="custom-dropdown-item">
-                  <i className="fas fa-code-branch me-2"></i>
-                  {t('header.consolidatedScripts')}
-                </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           )}

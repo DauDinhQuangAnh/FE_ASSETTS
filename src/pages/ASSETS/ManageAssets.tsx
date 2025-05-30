@@ -278,9 +278,30 @@ export default function ManageAssets() {
     e.preventDefault();
     setAddLoading(true);
     try {
-      await axios.post('/assets', newAsset);
+      console.log('Bắt đầu tạo thiết bị mới với dữ liệu:', newAsset);
+
+      // Validate required fields
+      if (!newAsset.asset_code || !newAsset.asset_name || !newAsset.category_id || !newAsset.status_id) {
+        console.error('Thiếu thông tin bắt buộc:', {
+          asset_code: !newAsset.asset_code,
+          asset_name: !newAsset.asset_name,
+          category_id: !newAsset.category_id,
+          status_id: !newAsset.status_id
+        });
+        toast.error('Vui lòng điền đầy đủ thông tin bắt buộc');
+        setAddLoading(false);
+        return;
+      }
+
+      console.log('Gửi request tạo thiết bị đến API...');
+      const response = await axios.post('/assets', newAsset);
+      console.log('Response từ API:', response.data);
+
       toast.success(t('manageAssets.messages.addSuccess'));
       setShowAddModal(false);
+
+      // Reset form
+      console.log('Reset form về trạng thái ban đầu');
       setNewAsset({
         asset_code: '',
         asset_name: '',
@@ -311,8 +332,17 @@ export default function ManageAssets() {
         notes: '',
         old_ip: ''
       });
-      fetchAssets();
+
+      console.log('Cập nhật lại danh sách thiết bị');
+      await fetchAssets();
+
     } catch (err: any) {
+      console.error('Lỗi khi tạo thiết bị:', err);
+      console.error('Chi tiết lỗi:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status
+      });
       toast.error(err.response?.data?.message || t('manageAssets.messages.addError'));
     } finally {
       setAddLoading(false);

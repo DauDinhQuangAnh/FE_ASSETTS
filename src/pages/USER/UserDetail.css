@@ -456,3 +456,141 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 2;
 }
+
+/* Modal styles */
+.modal-90w {
+  max-width: 90%;
+  width: 1200px;
+}
+
+.modal-90w .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+}
+
+.modal-90w .modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Action button styles */
+.action-button {
+  min-width: 150px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.action-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.action-button i {
+  font-size: 1rem;
+}
+
+/* Button variants */
+.btn-outline-primary.action-button {
+  border-color: #0d6efd;
+  color: #0d6efd;
+}
+
+.btn-outline-primary.action-button:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.btn-outline-success.action-button {
+  border-color: #198754;
+  color: #198754;
+}
+
+.btn-outline-success.action-button:hover {
+  background-color: #198754;
+  color: white;
+}
+
+.btn-outline-warning.action-button {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.btn-outline-warning.action-button:hover {
+  background-color: #ffc107;
+  color: black;
+}
+
+.btn-outline-danger.action-button {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.btn-outline-danger.action-button:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Floor filter styles */
+.floor-filter-container {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.floor-filter-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.floor-filter-options {
+  display: flex;
+  gap: 24px;
+}
+
+.floor-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.floor-filter-option:hover {
+  color: #0d6efd;
+}
+
+.floor-filter-container {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.floor-filter-container .form-check {
+  padding-left: 0;
+  margin-right: 16px;
+}
+
+.floor-filter-container .form-check-input {
+  margin-right: 8px;
+}
+
+.floor-filter-container .form-check-label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.floor-filter-container .form-check-label:hover {
+  color: #0d6efd;
+}

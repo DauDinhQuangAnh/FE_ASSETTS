@@ -10,7 +10,7 @@ import HandoverReport from '../../components/HandoverReport';
 import html2pdf from 'html2pdf.js';
 import { format } from 'date-fns';
 import { PDFDocument } from 'pdf-lib';
-import { fetchNetworkSegments, updateNetworkSegment } from '../../services/networkSegmentService';
+import { fetchNetworkSegments } from '../../services/networkSegmentService';
 import type {
   Asset,
   BusinessUnit,
@@ -21,6 +21,7 @@ import type {
 } from '../../types/typeUserDetail';
 import ProcessMultiAssetsModal from './processmultiassets';
 import UpdateUserModal from './capnhatprocess';
+import UnregisterModal from './huyprocess';
 
 const FLOOR_VLANS = {
   '1F': ['166', '167'],
@@ -79,7 +80,8 @@ export default function UserDetail() {
   const [selectedAction, setSelectedAction] = useState<'complete' | 'deleteAD' | 'forceDelete' | null>(null);
   const [loadingFiles,] = useState(false);
   const [uploadedFiles,] = useState<UploadedFile[]>([]);
-
+  const [showUnregisterModal, setShowUnregisterModal] = useState(false);
+  const [, setSelectedUnregisterAssets] = useState<number[]>([]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -639,123 +641,6 @@ export default function UserDetail() {
     }
   };
 
-  const [showUnregisterModal, setShowUnregisterModal] = useState(false);
-  const [selectedUnregisterAssets, setSelectedUnregisterAssets] = useState<number[]>([]);
-  const [unregisterLoading, setUnregisterLoading] = useState(false);
-
-  const handleUnregisterAssets = async () => {
-    if (selectedUnregisterAssets.length === 0) {
-      toast.error('Vui lòng chọn ít nhất một thiết bị');
-      return;
-    }
-
-    try {
-      setUnregisterLoading(true);
-      setError('');
-
-      const currentUser = sessionStorage.getItem('auth');
-      if (!currentUser) {
-        toast.error('Vui lòng đăng nhập lại');
-        return;
-      }
-
-      const { employee_id } = JSON.parse(currentUser);
-      if (!employee_id) {
-        toast.error('Không tìm thấy thông tin người xử lý');
-        return;
-      }
-
-      const payload = {
-        asset_ids: selectedUnregisterAssets,
-        processed_by: employee_id,
-        department_id: user?.department_id,
-        note: 'Hủy đăng ký thiết bị'
-      };
-
-      const response = await axios.post(`/auth/users/${empCode}/unregister-assets`, payload);
-
-      if (response.data.errors && response.data.errors.length > 0) {
-        const errorMessages = response.data.errors.map((err: any) =>
-          `Thiết bị ${err.asset_code}: ${err.message}`
-        );
-        toast.error(
-          <div>
-            <strong>Lỗi hủy đăng ký thiết bị:</strong>
-            <ul className="mt-2 mb-0">
-              {errorMessages.map((msg: string, idx: number) => (
-                <li key={idx}>{msg}</li>
-              ))}
-            </ul>
-          </div>
-        );
-        return;
-      }
-
-      const assetsToUnregister = userAssets.filter(asset =>
-        selectedUnregisterAssets.includes(asset.asset_id)
-      );
-
-      const ipUpdates = assetsToUnregister
-        .filter(asset => asset.ip_address)
-        .flatMap(asset => {
-          if (!asset.ip_address) return [];
-          const ips = typeof asset.ip_address === 'string' ? asset.ip_address.split(', ') : asset.ip_address;
-          return ips.map((ip: string) => ({
-            ip: ip,
-            status: null,
-            hostname: null,
-            ipType: localStorage.getItem(`ipType_${ip}`) as 'Fixed' | 'DHCP' || 'DHCP'
-          }));
-        });
-
-      if (ipUpdates.length > 0) {
-        await Promise.all(ipUpdates.map(update => updateNetworkSegment(update)));
-        toast.success('Cập nhật trạng thái IP thành công');
-      }
-
-      toast.success('Hủy đăng ký thiết bị thành công');
-      localStorage.clear()
-      const assetsRes = await axios.get(`/auth/users/${empCode}/assets`);
-      setUserAssets(assetsRes.data);
-
-      setShowUnregisterModal(false);
-      setSelectedUnregisterAssets([]);
-
-    } catch (err: any) {
-      console.error('Lỗi hủy đăng ký thiết bị:', err);
-      const errorMessage = err.response?.data?.message || 'Lỗi không xác định khi hủy đăng ký thiết bị';
-      toast.error(errorMessage);
-      setError(errorMessage);
-    } finally {
-
-      setUnregisterLoading(false);
-    }
-  };
-
-  const toggleUnregisterAssetSelection = (assetId: number) => {
-    const asset = userAssets.find(a => a.asset_id === assetId);
-    if (!asset) return;
-
-    if (asset.history_status === 'Đã hủy đăng ký') {
-      toast.warning('Thiết bị này đã được hủy đăng ký');
-      return;
-    }
-
-    if (asset.history_status !== 'Đã đăng ký' && asset.history_status !== 'Chờ bàn giao') {
-      toast.warning('Chỉ có thể hủy đăng ký thiết bị đang trong trạng thái "Đã đăng ký" hoặc "Chờ bàn giao"');
-      return;
-    }
-
-    setSelectedUnregisterAssets(prev => {
-      if (prev.includes(assetId)) {
-        return prev.filter(id => id !== assetId);
-      } else {
-        return [...prev, assetId];
-      }
-    });
-  };
-
-
   const handleDownloadFile = async (fileId: number, filename: string) => {
     try {
       const response = await axios.get(`/auth/users/${empCode}/download-file/${fileId}`, {
@@ -912,6 +797,24 @@ export default function UserDetail() {
     }
   }, [assignmentData.floor, ipType]);
 
+  const handleOpenUnregisterModal = () => {
+    setShowUnregisterModal(true);
+  };
+
+  const handleCloseUnregisterModal = () => {
+    setShowUnregisterModal(false);
+    setSelectedUnregisterAssets([]);
+  };
+
+  const handleUnregisterComplete = async () => {
+    try {
+      const assetsRes = await axios.get(`/auth/users/${empCode}/assets`);
+      setUserAssets(assetsRes.data);
+    } catch (err) {
+      console.error('Error refetching assets:', err);
+      toast.error('Không thể tải lại danh sách thiết bị sau khi hủy đăng ký');
+    }
+  };
 
   if (loading) {
     return (
@@ -1239,7 +1142,7 @@ export default function UserDetail() {
                                   onClick={e => {
                                     e.stopPropagation();
                                     setSelectedUnregisterAssets([asset.asset_id]);
-                                    setShowUnregisterModal(true);
+                                    handleOpenUnregisterModal();
                                   }}
                                 >
                                   <i className="fas fa-times me-1"></i> Hủy đăng ký
@@ -1861,95 +1764,13 @@ export default function UserDetail() {
       </Modal>
 
       {/* Unregister Modal */}
-      <Modal show={showUnregisterModal} onHide={() => setShowUnregisterModal(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Hủy đăng ký thiết bị</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {error && (
-            <Alert variant="danger" className="mb-3">
-              <i className="fas fa-exclamation-circle me-2"></i>
-              {error}
-            </Alert>
-          )}
-
-
-          <div className="table-responsive">
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Mã thiết bị</th>
-                  <th>Tên thiết bị</th>
-                  <th>Trạng thái</th>
-                  <th>Ngày cấp</th>
-                </tr>
-              </thead>
-              <tbody>
-                {userAssets
-                  .filter(asset =>
-                    asset.history_status === 'Đã đăng ký' ||
-                    asset.history_status === 'Chờ bàn giao' ||
-                    asset.history_status === 'Cấp phát chờ xóa'
-                  )
-                  .map(asset => (
-                    <tr key={asset.asset_id}>
-                      <td className="text-center">
-                        <Form.Check
-                          type="checkbox"
-                          checked={selectedUnregisterAssets.includes(asset.asset_id)}
-                          onChange={() => toggleUnregisterAssetSelection(asset.asset_id)}
-                        />
-                      </td>
-                      <td>{asset.asset_code}</td>
-                      <td>
-                        <div>{asset.asset_name}</div>
-                        <small className="text-muted">{asset.model}</small>
-                      </td>
-                      <td>
-                        <span className={`badge bg-${getStatusBadgeClass(asset.history_status)}`}>
-                          {asset.history_status}
-                        </span>
-                      </td>
-                      <td>{new Date(asset.handover_date).toLocaleDateString('vi-VN')}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </Table>
-            {userAssets.filter(asset => asset.history_status === 'Đã đăng ký' || asset.history_status === 'Chờ bàn giao' || asset.history_status === 'Cấp phát chờ xóa').length === 0 && (
-              <Alert variant="info" className="mt-3">
-                <i className="fas fa-info-circle me-2"></i>
-                Không có thiết bị nào đang ở trạng thái "Đã đăng ký" hoặc "Chờ bàn giao"
-              </Alert>
-            )}
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => {
-            setShowUnregisterModal(false);
-            setError('');
-            setSelectedUnregisterAssets([]);
-          }}>
-            Hủy
-          </Button>
-          <Button
-            variant="primary"
-            onClick={handleUnregisterAssets}
-            disabled={unregisterLoading || selectedUnregisterAssets.length === 0}
-          >
-            {unregisterLoading ? (
-              <>
-                <Spinner size="sm" className="me-2" />
-                Đang xử lý...
-              </>
-            ) : (
-              <>
-                <i className="fas fa-check me-2"></i>
-                Xác nhận hủy đăng ký
-              </>
-            )}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <UnregisterModal
+        show={showUnregisterModal}
+        onHide={handleCloseUnregisterModal}
+        user={user}
+        userAssets={userAssets}
+        onUnregisterComplete={handleUnregisterComplete}
+      />
 
       {/* Handover Report Modal */}
       <Modal show={showHandoverReport} onHide={handleCancelHandover} size="lg">
@@ -2025,139 +1846,3 @@ export default function UserDetail() {
     </Layout>
   );
 }
-
-<style>
-  {`
-  .modal-90w {
-    max-width: 90%;
-    width: 1200px;
-  }
-  .modal-90w .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-  }
-  .modal-90w .modal-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-
-  .action-button {
-    min-width: 150px;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-
-  .action-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  }
-
-  .action-button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-
-  .action-button i {
-    font-size: 1rem;
-  }
-
-  .btn-outline-primary.action-button {
-    border-color: #0d6efd;
-    color: #0d6efd;
-  }
-
-  .btn-outline-primary.action-button:hover {
-    background-color: #0d6efd;
-    color: white;
-  }
-
-  .btn-outline-success.action-button {
-    border-color: #198754;
-    color: #198754;
-  }
-
-  .btn-outline-success.action-button:hover {
-    background-color: #198754;
-    color: white;
-  }
-
-  .btn-outline-warning.action-button {
-    border-color: #ffc107;
-    color: #ffc107;
-  }
-
-  .btn-outline-warning.action-button:hover {
-    background-color: #ffc107;
-    color: black;
-  }
-
-  .btn-outline-danger.action-button {
-    border-color: #dc3545;
-    color: #dc3545;
-  }
-
-  .btn-outline-danger.action-button:hover {
-    background-color: #dc3545;
-    color: white;
-  }
-
-  .floor-filter-container {
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-
-  .floor-filter-title {
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-
-  .floor-filter-options {
-    display: flex;
-    gap: 24px;
-  }
-
-  .floor-filter-option {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    user-select: none;
-    cursor: pointer;
-  }
-
-  .floor-filter-option:hover {
-    color: #0d6efd;
-  }
-
-  .floor-filter-container {
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    margin-bottom: 20px;
-  }
-
-  .floor-filter-container .form-check {
-    padding-left: 0;
-    margin-right: 16px;
-  }
-
-  .floor-filter-container .form-check-input {
-    margin-right: 8px;
-  }
-
-  .floor-filter-container .form-check-label {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-
-  .floor-filter-container .form-check-label:hover {
-    color: #0d6efd;
-  }
-`}
-</style> 

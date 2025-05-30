@@ -22,6 +22,7 @@ import type {
 import ProcessMultiAssetsModal from './processmultiassets';
 import UpdateUserModal from './capnhatprocess';
 import UnregisterModal from './huyprocess';
+import HandoverModal from './bienbanbangiao';
 
 const FLOOR_VLANS = {
   '1F': ['166', '167'],
@@ -68,10 +69,10 @@ export default function UserDetail() {
   const [searchTerm,] = useState('');
   const [, setCurrentPage] = useState(1);
   const [showHandoverModal, setShowHandoverModal] = useState(false);
-  const [handoverLoading, setHandoverLoading] = useState(false);
+  const [, setHandoverLoading] = useState(false);
   const [selectedAssets, setSelectedAssets] = useState<number[]>([]);
   const [showHandoverReport, setShowHandoverReport] = useState(false);
-  const [handoverBy, setHandoverBy] = useState('');
+  const [handoverBy,] = useState('');
   const [showReturnModal, setShowReturnModal] = useState(false);
   const [showReturnConfirmModal, setShowReturnConfirmModal] = useState(false);
   const [returnLoading, setReturnLoading] = useState(false);
@@ -82,6 +83,14 @@ export default function UserDetail() {
   const [uploadedFiles,] = useState<UploadedFile[]>([]);
   const [showUnregisterModal, setShowUnregisterModal] = useState(false);
   const [, setSelectedUnregisterAssets] = useState<number[]>([]);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [, setImportFile] = useState<File | null>(null);
+  const [importLoading, setImportLoading] = useState(false);
+  const [importError, setImportError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
     setCurrentPage(1);
@@ -225,42 +234,22 @@ export default function UserDetail() {
     }
   };
 
-  const handleHandoverAssets = async () => {
 
-    if (selectedAssets.length === 0) {
-      toast.error('Vui lòng chọn ít nhất một thiết bị');
-      return;
-    }
-
-    const invalidAssets = userAssets.filter(asset =>
-      selectedAssets.includes(asset.history_id) &&
-      asset.history_status !== 'Chờ bàn giao'
-    );
-
-    if (invalidAssets.length > 0) {
-      const assetCodes = invalidAssets.map(asset => asset.asset_code).join(', ');
-      toast.error(`Chỉ có thể bàn giao thiết bị có trạng thái "Chờ bàn giao". Các thiết bị sau không đủ điều kiện: ${assetCodes}`);
-      return;
-    }
-
-    const currentUser = sessionStorage.getItem('auth');
-
-    if (!currentUser) {
-      toast.error('Vui lòng đăng nhập lại');
-      return;
-    }
-
-    const { employee_id, full_name } = JSON.parse(currentUser);
-
-    if (!employee_id) {
-      toast.error('Không tìm thấy thông tin người bàn giao');
-      return;
-    }
-
-    setHandoverBy(full_name);
+  const handleCloseHandoverModal = () => {
     setShowHandoverModal(false);
-    setShowHandoverReport(true);
+    setSelectedAssets([]);
   };
+
+  const handleHandoverComplete = async () => {
+    try {
+      const assetsRes = await axios.get(`/auth/users/${empCode}/assets`);
+      setUserAssets(assetsRes.data);
+    } catch (err) {
+      console.error('Error refetching assets:', err);
+      toast.error('Không thể tải lại danh sách thiết bị sau khi bàn giao');
+    }
+  };
+
 
   const handleConfirmHandover = async () => {
     try {
@@ -375,21 +364,6 @@ export default function UserDetail() {
       toast.error('Không thể tải biên bản bàn giao');
     }
   };
-  const toggleAssetSelection = (assetId: number) => {
-    const asset = userAssets.find(a => a.asset_id === assetId);
-    if (asset && asset.history_status !== 'Chờ bàn giao') {
-      toast.warning('Chỉ có thể bàn giao thiết bị có trạng thái "Chờ bàn giao"');
-      return;
-    }
-
-    setSelectedAssets(prev => {
-      if (prev.includes(assetId)) {
-        return prev.filter(id => id !== assetId);
-      } else {
-        return [...prev, assetId];
-      }
-    });
-  };
 
   const handleOpenImportFile = () => {
     setShowImportModal(true);
@@ -449,15 +423,12 @@ export default function UserDetail() {
     return true;
   }, []);
 
-
   const handleDrop = useCallback(async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const file = e.dataTransfer.files[0];
-      setFileLoading(true);
-
       try {
         await validateFile(file);
         await new Promise(resolve => setTimeout(resolve, 300));
@@ -466,8 +437,6 @@ export default function UserDetail() {
         console.error('Lỗi khi đọc file:', error);
         setImportError(error.message || 'Không thể đọc file. Vui lòng thử lại.');
         setImportFile(null);
-      } finally {
-        setFileLoading(false);
       }
     }
   }, [validateFile, processFileWithDebounce]);
@@ -660,17 +629,6 @@ export default function UserDetail() {
     }
   };
 
-  const [showImportModal, setShowImportModal] = useState(false);
-  const [, setImportFile] = useState<File | null>(null);
-  const [importLoading, setImportLoading] = useState(false);
-  const [importError, setImportError] = useState('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [fileLoading, setFileLoading] = useState(false);
-  const uploadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
-  const [folderStatus, setFolderStatus] = useState<{ type: 'success' | 'error' | null, message: string }>({ type: null, message: '' });
-
   const handleMultipleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
@@ -720,27 +678,6 @@ export default function UserDetail() {
     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleOpenFolder = async () => {
-    try {
-      setFileLoading(true);
-      setFolderStatus({ type: null, message: '' });
-      await axios.get(`/auth/users/${empCode}/open-folder`);
-      setFolderStatus({
-        type: 'success',
-        message: 'Đã mở folder thành công!'
-      });
-      toast.success('Đã mở folder thành công');
-    } catch (err) {
-      console.error('Lỗi mở folder:', err);
-      setFolderStatus({
-        type: 'error',
-        message: 'Không thể mở folder. Vui lòng kiểm tra: \n1. Đường dẫn folder có tồn tại\n2. Bạn có quyền truy cập folder\n3. Thử lại sau'
-      });
-      toast.error('Không thể mở folder');
-    } finally {
-      setFileLoading(false);
-    }
-  };
 
   const [, setAvailableIPs] = useState<{ [key: string]: string[] }>({});
   const [ipType, setIpType] = useState<{ [key: string]: 'Fixed' | 'DHCP' }>({});
@@ -1453,91 +1390,13 @@ export default function UserDetail() {
       {/* This modal is now handled by ProcessMultiAssetsModal component */}
 
       {/* Handover Modal */}
-      <Modal show={showHandoverModal} onHide={() => setShowHandoverModal(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Bàn giao thiết bị</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {error && (
-            <Alert variant="danger" className="mb-3">
-              <i className="fas fa-exclamation-circle me-2"></i>
-              {error}
-            </Alert>
-          )}
-
-          <div className="table-responsive">
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th style={{ width: '50px' }}></th>
-                  <th>Mã thiết bị</th>
-                  <th>Tên thiết bị</th>
-                  <th>Trạng thái</th>
-                  <th>Ngày cấp</th>
-                </tr>
-              </thead>
-              <tbody>
-                {userAssets
-                  .filter(asset => asset.history_status === 'Chờ bàn giao')
-                  .map(asset => (
-                    <tr key={asset.asset_id}>
-                      <td className="text-center">
-                        <Form.Check
-                          type="checkbox"
-                          checked={selectedAssets.includes(asset.asset_id)}
-                          onChange={() => toggleAssetSelection(asset.asset_id)}
-                        />
-                      </td>
-                      <td>{asset.asset_code}</td>
-                      <td>
-                        <div>{asset.asset_name}</div>
-                        <small className="text-muted">{asset.model}</small>
-                      </td>
-                      <td>
-                        <span className={`badge bg-${getStatusBadgeClass(asset.history_status)}`}>
-                          {asset.history_status}
-                        </span>
-                      </td>
-                      <td>{new Date(asset.handover_date).toLocaleDateString('vi-VN')}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </Table>
-            {userAssets.filter(asset => asset.history_status === 'Chờ bàn giao').length === 0 && (
-              <Alert variant="info" className="mt-3">
-                <i className="fas fa-info-circle me-2"></i>
-                Không có thiết bị nào đang ở trạng thái "Chờ bàn giao"
-              </Alert>
-            )}
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => {
-            setShowHandoverModal(false);
-            setError('');
-            setSelectedAssets([]);
-          }}>
-            Hủy
-          </Button>
-          <Button
-            variant="primary"
-            onClick={handleHandoverAssets}
-            disabled={handoverLoading || selectedAssets.length === 0}
-          >
-            {handoverLoading ? (
-              <>
-                <Spinner size="sm" className="me-2" />
-                Đang xử lý...
-              </>
-            ) : (
-              <>
-                <i className="fas fa-check me-2"></i>
-                Xác nhận bàn giao
-              </>
-            )}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <HandoverModal
+        show={showHandoverModal}
+        onHide={handleCloseHandoverModal}
+        user={user}
+        userAssets={userAssets}
+        onHandoverComplete={handleHandoverComplete}
+      />
 
       {/* Import File Modal */}
       <Modal show={showImportModal} onHide={handleCloseImportModal} size="lg">
@@ -1547,41 +1406,6 @@ export default function UserDetail() {
         <Modal.Body>
           {importError && (
             <Alert variant="danger">{importError}</Alert>
-          )}
-
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <div>
-              <Button
-                variant="outline-primary"
-                onClick={handleOpenFolder}
-                disabled={fileLoading}
-              >
-                {fileLoading ? (
-                  <>
-                    <Spinner animation="border" size="sm" className="me-2" />
-                    Đang mở folder...
-                  </>
-                ) : (
-                  <>
-                    <i className="fas fa-folder-open me-2"></i>
-                    Mở Folder
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-
-          {folderStatus.type && (
-            <Alert variant={folderStatus.type} className="mt-3">
-              <div className="d-flex align-items-center">
-                <i className={`fas fa-${folderStatus.type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2`}></i>
-                <div>
-                  {folderStatus.message.split('\n').map((line, index) => (
-                    <div key={index}>{line}</div>
-                  ))}
-                </div>
-              </div>
-            </Alert>
           )}
 
           <div

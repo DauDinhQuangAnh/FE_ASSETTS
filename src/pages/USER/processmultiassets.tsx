@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Button, Spinner, Modal, Form, Table } from 'react-bootstrap';
 import axios from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
-import { fetchNetworkSegments, updateNetworkSegment } from '../../services/networkSegmentService';
+import { fetchNetworkSegments } from '../../services/networkSegmentService';
 import type { Asset, User, FloorFilterType } from '../../types/typeUserDetail';
 
 const FLOOR_VLANS = {
@@ -54,8 +54,15 @@ const ProcessMultiAssetsModal: React.FC<ProcessMultiAssetsModalProps> = ({ show,
     });
 
     const [selectedAssetsAllType, setSelectedAssetsAllType] = useState<Asset[]>([]);
-    const [multiAssignData, setMultiAssignData] = useState<{ [assetId: string]: { floor?: string, ip?: string, ipType?: 'DHCP' | 'FIXED', note?: string } }>({});
-    const [multiAvailableIPs, setMultiAvailableIPs] = useState<{ [assetId: string]: string[] }>({});
+    const [multiAssignData, setMultiAssignData] = useState<{
+        [assetId: string]: {
+            floors?: string[],
+            ips?: { [floor: string]: string },
+            ipTypes?: { [floor: string]: 'DHCP' | 'FIXED' },
+            note?: string
+        }
+    }>({});
+    const [multiAvailableIPs, setMultiAvailableIPs] = useState<{ [assetId: string]: { [floor: string]: string[] } }>({});
 
     const fetchAvailableAssets = async () => {
         if (!user?.emp_code) return;
@@ -157,106 +164,120 @@ const ProcessMultiAssetsModal: React.FC<ProcessMultiAssetsModalProps> = ({ show,
                 ips.push(...uniqueIPs);
             } catch (error) { }
         }
-        setMultiAvailableIPs(prev => ({ ...prev, [assetId]: ips.sort() }));
+        // Store IPs per floor for the asset
+        setMultiAvailableIPs(prev => ({
+            ...prev,
+            [assetId]: {
+                ...(prev[assetId] || {}),
+                [floor]: ips.sort()
+            }
+        }));
     };
 
-    const handleMultiAssignFloorChange = async (assetId: string, floor: string, ipType: 'DHCP' | 'FIXED' = 'DHCP') => {
-        setMultiAssignData(prev => ({ ...prev, [assetId]: { ...prev[assetId], floor, ip: '', ipType } }));
-        if (floor) {
-            await fetchMultiIPs(assetId, floor, ipType);
-        } else {
-            setMultiAvailableIPs(prev => ({ ...prev, [assetId]: [] }));
-        }
-    };
 
     const handleMultiAssign = async () => {
         if (!user?.emp_code || selectedAssetsAllType.length === 0) return;
         setAssignLoading(true);
+        const successfulAssignments: number[] = [];
+        const failedAssignments: { asset_code: string; message: string }[] = [];
+
         try {
             const newAssets = selectedAssetsAllType.filter(a => a.status_name === 'New');
             const inuseAssets = selectedAssetsAllType.filter(a => a.status_name === 'Đang sử dụng');
             const deleteAssets = selectedAssetsAllType.filter(a => a.status_name === 'Chờ xóa');
 
-            for (const asset of newAssets) {
+            // Process New assets (send individual requests) and In Use assets
+            const assetsToProcess = [...newAssets, ...inuseAssets];
+
+            for (const asset of assetsToProcess) {
                 const data = multiAssignData[String(asset.asset_id)] || {};
-                if (!data.floor || !data.ip) {
-                    toast.error(`Vui lòng chọn đầy đủ tầng và IP cho thiết bị ${asset.asset_code}`);
-                    setAssignLoading(false);
-                    return; // Stop further processing
+                const assetCode = asset.asset_code || 'N/A';
+
+                // For New assets, validate if at least one IP is selected
+                if (asset.status_name === 'New') {
+                    const hasAtLeastOneIP = Object.values(data.ips || {}).some(ip => ip !== '');
+                    if (!hasAtLeastOneIP) {
+                        failedAssignments.push({ asset_code: assetCode, message: 'Vui lòng chọn ít nhất một IP' });
+                        continue; // Skip this asset if validation fails
+                    }
                 }
+
+                // Determine the primary floor and collect all selected IPs
+                const selectedFloors = data.floors || [];
+                const primaryFloor = selectedFloors.length > 0 ? selectedFloors[0] : asset.floor || null; // Use first selected floor, fallback to existing
+                const selectedIpsArray = selectedFloors
+                    .filter(floor => data.ips?.[floor]) // Only include floors that have IPs
+                    .map(floor => data.ips?.[floor])
+                    .filter(ip => ip) as string[]; // Filter out undefined/null IPs
+
+
                 const payload = {
                     asset_id: asset.asset_id,
                     department_id: user.department_id,
                     handover_by: JSON.parse(sessionStorage.getItem('auth') || '{}').employee_id,
-                    floor: data.floor,
-                    history_status: 'Đã đăng ký',
-                    is_handover: true,
-                    ip_address: [data.ip],
-                    ipType: data.ipType || 'DHCP'
+                    floor: primaryFloor, // Send only one floor to match BE history table
+                    history_status: asset.status_name === 'New' || asset.status_name === 'Đang sử dụng' ? 'Đã đăng ký' : asset.history_status, // Assuming 'Đã đăng ký' for New/In Use
+                    is_handover: asset.status_name === 'New' ? true : (asset.is_handover !== undefined ? asset.is_handover : true), // Assuming is_handover true for New, keep existing for In Use
+                    note: data.note || null,
+                    ip_address: selectedIpsArray,
                 };
-                await axios.post(`/auth/users/${user.emp_code}/assign-asset`, payload);
+
+                try {
+                    // Send request for each asset
+                    await axios.post(`/auth/users/${user.emp_code}/assign-asset`, payload);
+                    successfulAssignments.push(asset.asset_id);
+                } catch (err: any) {
+                    console.error(`Error assigning asset ${assetCode}:`, err);
+                    failedAssignments.push({ asset_code: assetCode, message: err.response?.data?.message || 'Lỗi không xác định' });
+                }
             }
 
-            for (const asset of inuseAssets) {
-                const data = multiAssignData[String(asset.asset_id)] || {};
-                // For inuse assets, floor and IP might not be required if they are already assigned
-                // Add validation or adjust logic based on your requirements for inuse asset assignment
-                const payload = {
-                    asset_id: asset.asset_id,
-                    department_id: user.department_id,
-                    handover_by: JSON.parse(sessionStorage.getItem('auth') || '{}').employee_id,
-                    floor: data.floor || asset.floor, // Use existing floor if not provided
-                    history_status: 'Đã đăng ký',
-                    is_handover: false, // Set is_handover to false for inuse assets
-                    ip_address: data.ip ? [data.ip] : (typeof asset.ip_address === 'string' ? asset.ip_address.split(', ') : asset.ip_address) || [], // Use new IP if provided, otherwise keep existing IPs
-                    ipType: data.ipType || (localStorage.getItem(`ipType_${(typeof asset.ip_address === 'string' ? asset.ip_address.split(', ')[0] : asset.ip_address?.[0]) || ''}`) as 'FIXED' | 'DHCP') || 'DHCP' // Keep existing IP type if not provided
-                };
-                await axios.post(`/auth/users/${user.emp_code}/assign-asset`, payload);
-            }
-
+            // Process Delete assets (send individual requests to a different endpoint)
             for (const asset of deleteAssets) {
+                // Re-using logic from previous implementation for delete assets
                 if (!asset.ip_address) {
-                    toast.error(`Thiết bị ${asset.asset_code} không có IP`);
-                    setAssignLoading(false);
-                    return; // Stop further processing
+                    failedAssignments.push({ asset_code: asset.asset_code || 'N/A', message: 'Thiết bị không có IP' });
+                    continue;
                 }
                 const ips = typeof asset.ip_address === 'string' ? asset.ip_address.split(', ') : asset.ip_address;
                 const floors = ips.map((ip: string) => getFloorFromIP(ip)).filter(Boolean);
-                const floorString = floors.join(' ');
                 const payload = {
                     asset_id: asset.asset_id,
                     department_id: user.department_id,
                     handover_by: JSON.parse(sessionStorage.getItem('auth') || '{}').employee_id,
-                    floor: floorString,
-                    note: multiAssignData[String(asset.asset_id)]?.note || null, // Allow adding note for delete assets
-                    is_handover: true // Assuming delete assets are handled as handover true for reassignment
+                    floors: floors, // Note: BE might only use the first floor here
+                    note: multiAssignData[String(asset.asset_id)]?.note || null,
+                    is_handover: true // Assuming true for delete handover
                 };
-                await axios.post(`/asset/users/${user.emp_code}/assign-delete-asset`, payload);
-            }
-
-            // Update IP statuses for newly assigned assets (New and In Use)
-            const assetsToUpdateIp = [...newAssets, ...inuseAssets];
-            for (const asset of assetsToUpdateIp) {
-                const data = multiAssignData[String(asset.asset_id)] || {};
-                const currentIPs = (typeof asset.ip_address === 'string' ? asset.ip_address.split(', ') : asset.ip_address) || [];
-
-                // IPs to set to null/unused (old IPs)
-                const oldIPsToClear = currentIPs.filter(ip => ip !== data.ip);
-                await Promise.all(oldIPsToClear.map(ip => updateNetworkSegment({ ip, status: null, hostname: null, ipType: (localStorage.getItem(`ipType_${ip}`) as 'FIXED' | 'DHCP') || 'DHCP' })));
-
-                // New IP to set to Registered
-                if (data.ip && !currentIPs.includes(data.ip)) {
-                    await updateNetworkSegment({ ip: data.ip, status: "Registered", ipType: data.ipType || 'DHCP' });
+                try {
+                    // Assuming a different endpoint for delete assignment based on previous code structure
+                    await axios.post(`/asset/users/${user.emp_code}/assign-delete-asset`, payload);
+                    successfulAssignments.push(asset.asset_id);
+                } catch (err: any) {
+                    console.error(`Error assigning delete asset ${asset.asset_code}:`, err);
+                    failedAssignments.push({ asset_code: asset.asset_code || 'N/A', message: err.response?.data?.message || 'Lỗi không xác định' });
                 }
             }
 
-            toast.success('Cấp phát thiết bị thành công!');
-            handleCloseAssignModal();
-            onAssetsAssigned(); // Notify parent component
+
+            if (successfulAssignments.length > 0) {
+                toast.success(`Cấp phát thành công ${successfulAssignments.length} thiết bị.`);
+            }
+
+            if (failedAssignments.length > 0) {
+                const errorMessages = failedAssignments.map(f => `Thiết bị ${f.asset_code}: ${f.message}`).join(', ');
+                toast.error(`Lỗi khi cấp phát ${failedAssignments.length} thiết bị: ${errorMessages}`);
+            }
+
+            if (successfulAssignments.length > 0) {
+                handleCloseAssignModal();
+                onAssetsAssigned();
+            }
 
         } catch (err: any) {
-            console.error('Error in handleMultiAssign:', err);
-            toast.error(err.response?.data?.message || 'Lỗi khi cấp phát thiết bị');
+            console.error('Unexpected error in handleMultiAssign:', err);
+            // This catch might be for errors before sending individual requests
+            toast.error(err.response?.data?.message || 'Lỗi không xác định khi xử lý cấp phát');
         } finally {
             setAssignLoading(false);
         }
@@ -402,12 +423,17 @@ const ProcessMultiAssetsModal: React.FC<ProcessMultiAssetsModalProps> = ({ show,
 
                                                                                 // Prefill floor and IP for inuse assets if available
                                                                                 if (assetType === 'inuse' && asset.floor) {
-                                                                                    updatedData.floor = asset.floor;
-                                                                                    updatedData.ip = initialIp;
-                                                                                    fetchMultiIPs(String(asset.asset_id), asset.floor, initialIpType);
+                                                                                    updatedData.floors = [asset.floor];
+                                                                                    updatedData.ips = { [asset.floor]: initialIp };
+                                                                                    updatedData.ipTypes = { [asset.floor]: initialIpType };
                                                                                 }
 
                                                                                 return { ...prev, [asset.asset_id]: updatedData };
+                                                                            });
+
+                                                                            // Fetch IPs for all floors when asset is selected
+                                                                            FLOOR_OPTIONS.forEach(floor => {
+                                                                                fetchMultiIPs(String(asset.asset_id), floor, 'DHCP');
                                                                             });
 
                                                                         } else {
@@ -452,52 +478,69 @@ const ProcessMultiAssetsModal: React.FC<ProcessMultiAssetsModalProps> = ({ show,
                                                         {isChecked && assetType !== 'delete' && (
                                                             <tr key={asset.asset_id + '-extra'}>
                                                                 <td colSpan={8} style={{ background: '#f8f9fa' }}>
-                                                                    <div className="d-flex align-items-center gap-4">
-                                                                        <div>
-                                                                            <Form.Label className="mb-0">Tầng:</Form.Label>
-                                                                            <Form.Select
-                                                                                value={multiAssignData[String(asset.asset_id)]?.floor || ''}
-                                                                                onChange={e => handleMultiAssignFloorChange(String(asset.asset_id), e.target.value, multiAssignData[String(asset.asset_id)]?.ipType || 'DHCP')}
-                                                                                style={{ width: 120, display: 'inline-block', marginLeft: 8 }}
-                                                                            >
-                                                                                <option value="">Chọn tầng</option>
-                                                                                {FLOOR_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
-                                                                            </Form.Select>
-                                                                        </div>
-                                                                        <div>
-                                                                            <Form.Label className="mb-0">IP Type:</Form.Label>
-                                                                            <Form.Select
-                                                                                value={multiAssignData[String(asset.asset_id)]?.ipType || 'DHCP'}
-                                                                                onChange={e => {
-                                                                                    const ipType = e.target.value as 'DHCP' | 'FIXED';
-                                                                                    setMultiAssignData(prev => ({ ...prev, [String(asset.asset_id)]: { ...prev[String(asset.asset_id)], ipType, ip: '' } }));
-                                                                                    const floor = multiAssignData[String(asset.asset_id)]?.floor;
-                                                                                    if (floor) fetchMultiIPs(String(asset.asset_id), floor, ipType);
-                                                                                }}
-                                                                                style={{ width: 120, display: 'inline-block', marginLeft: 8 }}
-                                                                            >
-                                                                                <option value="DHCP">DHCP</option>
-                                                                                <option value="FIXED">FIX</option>
-                                                                            </Form.Select>
-                                                                        </div>
-                                                                        <div>
-                                                                            <Form.Label className="mb-0">IP:</Form.Label>
-                                                                            <Form.Select
-                                                                                value={multiAssignData[String(asset.asset_id)]?.ip || ''}
-                                                                                onChange={e => setMultiAssignData(prev => ({ ...prev, [String(asset.asset_id)]: { ...prev[String(asset.asset_id)], ip: e.target.value } }))}
-                                                                                style={{ width: 180, display: 'inline-block', marginLeft: 8 }}
-                                                                                disabled={!multiAssignData[String(asset.asset_id)]?.floor || (multiAvailableIPs[String(asset.asset_id)] || []).length === 0}
-                                                                            >
-                                                                                <option value="">Chọn IP</option>
-                                                                                {(multiAvailableIPs[String(asset.asset_id)] || []).map(ip => (
-                                                                                    <option key={ip} value={ip}>{ip}</option>
-                                                                                ))}
-                                                                            </Form.Select>
-                                                                            {assetType === 'New' && <span className="text-danger ms-2">* Bắt buộc</span>}
-                                                                            {(!multiAssignData[String(asset.asset_id)]?.floor || (multiAvailableIPs[String(asset.asset_id)] || []).length === 0) && (assetType === 'New') && (
-                                                                                <Form.Text className="text-danger ms-2">Vui lòng chọn tầng để tải danh sách IP</Form.Text>
-                                                                            )}
-                                                                        </div>
+                                                                    <div className="d-flex flex-column gap-3">
+                                                                        {/* Display all floors by default */}
+                                                                        {FLOOR_OPTIONS.map(floor => (
+                                                                            <div key={floor} className="d-flex align-items-center gap-4">
+                                                                                <div>
+                                                                                    <Form.Label className="mb-0">Tầng {floor}:</Form.Label>
+                                                                                    <Form.Select
+                                                                                        value={multiAssignData[String(asset.asset_id)]?.ipTypes?.[floor] || 'DHCP'}
+                                                                                        onChange={e => {
+                                                                                            const ipType = e.target.value as 'DHCP' | 'FIXED';
+                                                                                            setMultiAssignData(prev => ({
+                                                                                                ...prev,
+                                                                                                [String(asset.asset_id)]: {
+                                                                                                    ...prev[String(asset.asset_id)],
+                                                                                                    floors: [...(prev[String(asset.asset_id)]?.floors || []).filter(f => f !== floor), floor], // Ensure floor is in list and unique
+                                                                                                    ipTypes: {
+                                                                                                        ...prev[String(asset.asset_id)]?.ipTypes,
+                                                                                                        [floor]: ipType
+                                                                                                    },
+                                                                                                    ips: {
+                                                                                                        ...prev[String(asset.asset_id)]?.ips,
+                                                                                                        [floor]: '' // Clear selected IP when IP type changes
+                                                                                                    }
+                                                                                                }
+                                                                                            }));
+                                                                                            fetchMultiIPs(String(asset.asset_id), floor, ipType);
+                                                                                        }}
+                                                                                        style={{ width: 120, display: 'inline-block', marginLeft: 8 }}
+                                                                                    >
+                                                                                        <option value="DHCP">DHCP</option>
+                                                                                        <option value="FIXED">FIX</option>
+                                                                                    </Form.Select>
+                                                                                </div>
+                                                                                <div>
+                                                                                    <Form.Label className="mb-0">IP:</Form.Label>
+                                                                                    <Form.Select
+                                                                                        value={multiAssignData[String(asset.asset_id)]?.ips?.[floor] || ''}
+                                                                                        onChange={e => {
+                                                                                            const selectedIp = e.target.value;
+                                                                                            setMultiAssignData(prev => ({
+                                                                                                ...prev,
+                                                                                                [String(asset.asset_id)]: {
+                                                                                                    ...prev[String(asset.asset_id)] || {}, // Ensure initial state exists
+                                                                                                    floors: [...(prev[String(asset.asset_id)]?.floors || []).filter(f => f !== floor), floor], // Ensure floor is in list and unique
+                                                                                                    ips: {
+                                                                                                        ...(prev[String(asset.asset_id)]?.ips || {}),
+                                                                                                        [floor]: selectedIp
+                                                                                                    }
+                                                                                                }
+                                                                                            }));
+                                                                                        }}
+                                                                                        style={{ width: 180, display: 'inline-block', marginLeft: 8 }}
+                                                                                        disabled={!(multiAvailableIPs[String(asset.asset_id)]?.[floor]?.length > 0)}
+                                                                                    >
+                                                                                        <option value="">Chọn IP</option>
+                                                                                        {(multiAvailableIPs[String(asset.asset_id)]?.[floor] || []).map(ip => (
+                                                                                            <option key={ip} value={ip}>{ip}</option>
+                                                                                        ))}
+                                                                                    </Form.Select>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -610,10 +653,11 @@ const ProcessMultiAssetsModal: React.FC<ProcessMultiAssetsModalProps> = ({ show,
                                 assignLoading ||
                                 selectedAssetsAllType.length === 0 ||
                                 selectedAssetsAllType.some(asset => {
-                                    // Chỉ kiểm tra điều kiện cho thiết bị 'new'
                                     if (asset.status_name === 'New') {
                                         const data = multiAssignData[String(asset.asset_id)] || {};
-                                        return !data.floor || !data.ip;
+                                        // Check if at least one floor has an IP selected
+                                        return !data.floors?.length || !data.ips ||
+                                            !Object.values(data.ips).some(ip => ip !== '');
                                     }
                                     return false;
                                 })

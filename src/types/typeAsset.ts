@@ -37,7 +37,7 @@ export interface Asset {
     status_name: string;
     upgrade_infor?: string;
     notes?: string;
-    old_ip?: string;
+    old_ip_address?: string;
     status_account?: string;
     mac_wifi?: string;
 }

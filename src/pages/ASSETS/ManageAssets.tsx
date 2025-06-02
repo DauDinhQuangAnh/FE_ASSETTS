@@ -61,7 +61,7 @@ export default function ManageAssets() {
     status_id: undefined,
     upgrade_infor: '',
     notes: '',
-    old_ip: ''
+    old_ip_address: ''
   });
   const [filters, setFilters] = useState({
     search: '',
@@ -330,7 +330,7 @@ export default function ManageAssets() {
         maintenance_cycle: 0,
         upgrade_infor: '',
         notes: '',
-        old_ip: ''
+        old_ip_address: ''
       });
 
       console.log('Cập nhật lại danh sách thiết bị');
@@ -835,8 +835,8 @@ export default function ManageAssets() {
                     <Form.Label>{t('manageAssets.modals.add.fields.oldIp')}</Form.Label>
                     <Form.Control
                       type="text"
-                      value={newAsset.old_ip}
-                      onChange={(e) => setNewAsset({ ...newAsset, old_ip: e.target.value })}
+                      value={newAsset.old_ip_address}
+                      onChange={(e) => setNewAsset({ ...newAsset, old_ip_address: e.target.value })}
                     />
                   </Form.Group>
                 </Col>

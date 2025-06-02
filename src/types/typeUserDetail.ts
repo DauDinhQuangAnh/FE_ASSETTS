@@ -40,7 +40,7 @@ export interface Asset {
     upgrade_infor: string;
     notes: string;
     history_mac_address: string;
-    old_ip: string;
+    old_ip_address: string;
     history_id: number;
 }
 

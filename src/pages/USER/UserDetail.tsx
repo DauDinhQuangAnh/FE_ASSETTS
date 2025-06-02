@@ -1070,13 +1070,13 @@ export default function UserDetail() {
                 <div className="col-md-6">
                   <h5 className="border-bottom pb-2">Thông tin mạng</h5>
                   <div className="mb-3">
-                    <strong>Địa chỉ IP:</strong> {selectedAsset.ip_address || 'Chưa cập nhật'}
+                    <strong>Địa chỉ IP:</strong> {Array.isArray(selectedAsset.ip_address) ? selectedAsset.ip_address.join(', ') : selectedAsset.ip_address || 'Chưa cập nhật'}
                   </div>
                   <div className="mb-3">
                     <strong>Địa chỉ MAC:</strong> {selectedAsset.mac_address || 'Chưa cập nhật'}
                   </div>
                   <div className="mb-3">
-                    <strong>IP cũ:</strong> {selectedAsset.old_ip || 'Chưa cập nhật'}
+                    <strong>IP cũ:</strong> {Array.isArray(selectedAsset.old_ip_address) ? selectedAsset.old_ip_address.join(', ') : selectedAsset.old_ip_address || 'Chưa cập nhật'}
                   </div>
                   <div className="mb-3">
                     <strong>Hub:</strong> {selectedAsset.hub || 'Chưa cập nhật'}

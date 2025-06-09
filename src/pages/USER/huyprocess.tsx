@@ -27,8 +27,10 @@ export default function UnregisterModal({ show, onHide, user, userAssets, onUnre
             return;
         }
 
-        if (asset.history_status !== 'Đã đăng ký' && asset.history_status !== 'Chờ bàn giao') {
-            toast.warning('Chỉ có thể hủy đăng ký thiết bị đang trong trạng thái "Đã đăng ký" hoặc "Chờ bàn giao"');
+        if (asset.history_status !== 'Đã đăng ký' &&
+            asset.history_status !== 'Chờ bàn giao' &&
+            asset.history_status !== 'Đang bị lỗi') {
+            toast.warning('Chỉ có thể hủy đăng ký thiết bị đang trong trạng thái "Đã đăng ký", "Chờ bàn giao" hoặc "Đang bị lỗi"');
             return;
         }
 

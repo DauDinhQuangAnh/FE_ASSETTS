@@ -4,7 +4,6 @@ import { Form, Button, Alert, Spinner, Modal, Table, Image, Pagination } from 'r
 import axios from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import './ManageUser.css';
 import { fetchBusinessUnits, fetchDepartments } from '../../api/userApi';
 import type {
@@ -61,7 +60,6 @@ const POSITION_OPTIONS = [
 ];
 
 export default function ManageUser() {
-  const { t } = useTranslation();
   const [mode, setMode] = useState<"list" | "detail">("list");
   const [search, setSearch] = useState('');
   const [allUsers, setAllUsers] = useState<User[]>([]);
@@ -219,14 +217,14 @@ export default function ManageUser() {
     <Layout>
       <div className="header-section">
         <div className="header-content">
-          <h5>{t('manageUser.title')}</h5>
+          <h5>Quản lý danh sách người dùng</h5>
 
           <Form.Group className="search-container d-flex" style={{ gap: '1px' }}>
             <div className="col-12">
               <Form.Group className="filter-group1">
                 <Form.Control
                   type="text"
-                  placeholder={t('manageUser.searchPlaceholder')}
+                  placeholder="Tìm kiếm theo mã nhân viên, họ tên hoặc email..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -234,14 +232,14 @@ export default function ManageUser() {
             </div>
             {mode === "detail" && (
               <Button variant="outline-secondary" onClick={handleBackToList}>
-                {t('manageUser.backToList')}
+                Quay lại danh sách
               </Button>
             )}
           </Form.Group>
 
           <Button variant="light" onClick={() => setShowCreateModal(true)}>
             <i className="fas fa-plus me-2"></i>
-            {t('manageUser.addNewUser')}
+            Thêm người dùng mới
           </Button>
         </div>
       </div>
@@ -251,7 +249,7 @@ export default function ManageUser() {
           {loadingAllUsers ? (
             <div className="loading-container">
               <Spinner animation="border" />
-              <p className="mt-3 text-muted">{t('manageUser.table.loading')}</p>
+              <p className="mt-3 text-muted">Đang tải danh sách người dùng...</p>
             </div>
           ) : user ? (
             <>
@@ -266,17 +264,17 @@ export default function ManageUser() {
                     {user.status_work === 'Working' ? (
                       <span className="status-badge">
                         <span className="status-dot"></span>
-                        {t('manageUser.status.working')}
+                        Đang làm việc
                       </span>
                     ) : user.status_work === 'On Leave' ? (
                       <span className="status-badge status-badge-leave">
                         <span className="status-dot"></span>
-                        {t('manageUser.status.onLeave')}
+                        Đang nghỉ
                       </span>
                     ) : user.status_work === 'Resigned' && (
                       <span className="status-badge status-badge-resigned">
                         <span className="status-dot"></span>
-                        {t('manageUser.status.resigned')}
+                        Đã nghỉ việc
                       </span>
                     )}
                   </div>
@@ -292,72 +290,72 @@ export default function ManageUser() {
                   <div className="row g-3">
                     <div className="col-5">
                       <div className="info-group">
-                        <label>{t('manageUser.userDetail.basicInfo.firstName')}</label>
+                        <label>Họ</label>
                         <div className="info-value">{user.first_name}</div>
                       </div>
                     </div>
                     <div className="col-7">
                       <div className="info-group">
-                        <label>{t('manageUser.userDetail.basicInfo.lastName')}</label>
+                        <label>Tên</label>
                         <div className="info-value">{user.last_name}</div>
                       </div>
                     </div>
                     <div className="col-4">
                       <div className="info-group">
-                        <label>{t('manageUser.userDetail.basicInfo.employeeCode')}</label>
+                        <label>Mã nhân viên</label>
                         <div className="info-value">{user.emp_code}</div>
                       </div>
                     </div>
                     <div className="col-8">
                       <div className="info-group">
-                        <label>{t('manageUser.userDetail.basicInfo.email')}</label>
+                        <label>Email</label>
                         <div className="info-value">{user.email}</div>
                       </div>
                     </div>
                     <div className="col-6">
                       <div className="info-group">
-                        <label>{t('manageUser.userDetail.basicInfo.businessUnit')}</label>
+                        <label>Đơn vị (BU)</label>
                         <div className="info-value">{user.business_unit_name}</div>
                       </div>
                     </div>
                     <div className="col-6">
                       <div className="info-group">
-                        <label>{t('manageUser.userDetail.basicInfo.department')}</label>
+                        <label>Phòng ban</label>
                         <div className="info-value">{user.department_name}</div>
                       </div>
                     </div>
                     <div className="col-6">
                       <div className="info-group">
-                        <label>{t('manageUser.userDetail.basicInfo.position')}</label>
+                        <label>Chức vụ</label>
                         <div className="info-value">{user.position}</div>
                       </div>
                     </div>
                     <div className="col-6">
                       <div className="info-group">
-                        <label>{t('manageUser.userDetail.basicInfo.role')}</label>
-                        <div className="info-value">{user.role === 'admin' ? t('manageUser.roles.admin') : t('manageUser.roles.user')}</div>
+                        <label>Vai trò</label>
+                        <div className="info-value">{user.role === 'admin' ? 'Quản trị viên' : 'Người dùng'}</div>
                       </div>
                     </div>
                     <div className="col-6">
                       <div className="info-group">
-                        <label>{t('manageUser.userDetail.basicInfo.joinDate')}</label>
+                        <label>Ngày vào làm</label>
                         <div className="info-value">{new Date(user.join_date).toLocaleDateString('vi-VN')}</div>
                       </div>
                     </div>
                     <div className="col-6">
                       <div className="info-group">
-                        <label>{t('manageUser.userDetail.basicInfo.leaveDate')}</label>
+                        <label>Ngày nghỉ việc</label>
                         <div className="info-value">
                           {user.leave_date
                             ? new Date(user.leave_date).toLocaleDateString('vi-VN')
-                            : <div className="text-success"><i className="fas fa-check-circle me-2"></i>{t('manageUser.userDetail.basicInfo.notResigned')}</div>}
+                            : <div className="text-success"><i className="fas fa-check-circle me-2"></i>Chưa nghỉ việc</div>}
                         </div>
                       </div>
                     </div>
                     <div className="col-12">
                       <div className="info-group">
-                        <label>{t('manageUser.userDetail.basicInfo.note')}</label>
-                        <div className="info-value note-value">{user.note || t('manageUser.userDetail.basicInfo.noNote')}</div>
+                        <label>Ghi chú</label>
+                        <div className="info-value note-value">{user.note || 'Chưa có ghi chú'}</div>
                       </div>
                     </div>
                   </div>
@@ -368,13 +366,13 @@ export default function ManageUser() {
                     onClick={() => setShowEditModal(true)}
                   >
                     <i className="fas fa-edit me-2"></i>
-                    {t('manageUser.userDetail.editInfo')}
+                    Chỉnh sửa thông tin
                   </Button>
                 </div>
               </div>
 
               <div className="assets-section section-card">
-                <h5 className="section-title">{t('manageUser.userDetail.assets.title')}</h5>
+                <h5 className="section-title">Danh sách thiết bị đang sử dụng</h5>
                 {loadingAllUsers ? (
                   <div className="text-center p-4">
                     <Spinner animation="border" />
@@ -384,11 +382,11 @@ export default function ManageUser() {
                     <Table striped bordered hover responsive>
                       <thead>
                         <tr>
-                          <th>{t('manageUser.userDetail.assets.columns.assetCode')}</th>
-                          <th>{t('manageUser.userDetail.assets.columns.assetName')}</th>
-                          <th>{t('manageUser.userDetail.assets.columns.type')}</th>
-                          <th>{t('manageUser.userDetail.assets.columns.status')}</th>
-                          <th>{t('manageUser.userDetail.assets.columns.handoverDate')}</th>
+                          <th>Mã thiết bị</th>
+                          <th>Tên thiết bị</th>
+                          <th>Loại</th>
+                          <th>Trạng thái</th>
+                          <th>Ngày cấp</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -423,7 +421,7 @@ export default function ManageUser() {
                   </div>
                 ) : (
                   <Alert variant="info" className="m-0">
-                    {t('manageUser.userDetail.assets.noAssets')}
+                    Người dùng chưa được cấp thiết bị nào
                   </Alert>
                 )}
               </div>
@@ -432,11 +430,11 @@ export default function ManageUser() {
             <div className="empty-state text-center">
               <div className="alert alert-warning">
                 <i className="fas fa-exclamation-triangle me-2"></i>
-                {t('manageUser.messages.searchAgain')}
+                Vui lòng tìm kiếm lại bằng mã nhân viên
               </div>
               <Button variant="outline-primary" onClick={handleBackToList} className="mt-3">
                 <i className="fas fa-arrow-left me-2"></i>
-                {t('manageUser.backToList')}
+                Quay lại danh sách
               </Button>
             </div>
           )}
@@ -449,7 +447,7 @@ export default function ManageUser() {
             <h5></h5>
             <div className="d-flex align-items-center gap-3">
               <small className="text-muted">
-                {filteredUsers.length} {t('manageUser.table.employeeCode')}
+                {filteredUsers.length} Mã nhân viên
               </small>
             </div>
           </div>
@@ -458,9 +456,9 @@ export default function ManageUser() {
             <div className="row g-3">
               <div className="col-md-3">
                 <Form.Group className="filter-group">
-                  <Form.Label>{t('manageUser.filters.status')}</Form.Label>
+                  <Form.Label>Trạng thái</Form.Label>
                   <Form.Select value={selectedStatus} onChange={handleStatusChange} id="status-filter">
-                    <option value="All">{t('manageUser.filters.allStatus')}</option>
+                    <option value="All">Tất cả trạng thái</option>
                     {Array.from(new Set(allUsers.map(u => u.status_work))).filter(Boolean).map((status, idx) => (
                       <option key={idx} value={status}>{status}</option>
                     ))}
@@ -470,9 +468,9 @@ export default function ManageUser() {
 
               <div className="col-md-3">
                 <Form.Group className="filter-group">
-                  <Form.Label>{t('manageUser.filters.businessUnit')}</Form.Label>
+                  <Form.Label>Đơn vị (BU)</Form.Label>
                   <Form.Select value={selectedBusinessUnit} onChange={handleBusinessUnitChange} id="business-unit-filter">
-                    <option value="All">{t('manageUser.filters.allBusinessUnits')}</option>
+                    <option value="All">Tất cả đơn vị</option>
                     {businessUnits.map(bu => (
                       <option key={bu.business_unit_id} value={bu.business_unit_id}>
                         {bu.name}
@@ -484,13 +482,13 @@ export default function ManageUser() {
 
               <div className="col-md-3">
                 <Form.Group className="filter-group">
-                  <Form.Label>{t('manageUser.filters.department')}</Form.Label>
+                  <Form.Label>Phòng ban</Form.Label>
                   <Form.Select
                     value={selectedDepartment}
                     onChange={handleDepartmentChange}
                     disabled={loadingDepartments}
                   >
-                    <option value="All">{t('manageUser.filters.allDepartments')}</option>
+                    <option value="All">Tất cả phòng ban</option>
                     {departments.map(dept => (
                       <option key={dept.department_id} value={dept.department_id}>
                         {dept.department_name}
@@ -500,7 +498,7 @@ export default function ManageUser() {
                   {loadingDepartments && (
                     <div className="text-muted mt-1" style={{ fontSize: '12px' }}>
                       <Spinner animation="border" size="sm" className="me-1" />
-                      {t('manageUser.filters.loadingDepartments')}
+                      Đang tải phòng ban...
                     </div>
                   )}
                 </Form.Group>
@@ -508,9 +506,9 @@ export default function ManageUser() {
 
               <div className="col-md-3">
                 <Form.Group className="filter-group">
-                  <Form.Label>{t('manageUser.filters.position')}</Form.Label>
+                  <Form.Label>Chức vụ</Form.Label>
                   <Form.Select value={selectedPosition} onChange={handlePositionChange}>
-                    <option value="All">{t('manageUser.filters.allPositions')}</option>
+                    <option value="All">Tất cả chức vụ</option>
                     {Array.from(new Set(allUsers.map(u => u.position))).filter(Boolean).map((position, idx) => (
                       <option key={idx} value={position}>{position}</option>
                     ))}
@@ -525,7 +523,7 @@ export default function ManageUser() {
           {loadingAllUsers ? (
             <div className="loading-container">
               <Spinner animation="border" />
-              <p className="mt-3 text-muted">{t('manageUser.table.loading')}</p>
+              <p className="mt-3 text-muted">Đang tải danh sách người dùng...</p>
             </div>
           ) : filteredUsers.length > 0 ? (
             <>
@@ -533,13 +531,13 @@ export default function ManageUser() {
                 <Table hover>
                   <thead>
                     <tr>
-                      <th>{t('manageUser.table.employeeCode')}</th>
-                      <th>{t('manageUser.table.fullName')}</th>
-                      <th>{t('manageUser.table.email')}</th>
-                      <th>{t('manageUser.table.businessUnit')}</th>
-                      <th>{t('manageUser.table.department')}</th>
-                      <th>{t('manageUser.table.position')}</th>
-                      <th>{t('manageUser.table.status')}</th>
+                      <th>Mã nhân viên</th>
+                      <th>Họ và tên</th>
+                      <th>Email</th>
+                      <th>Đơn vị</th>
+                      <th>Phòng ban</th>
+                      <th>Chức vụ</th>
+                      <th>Trạng thái</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -579,7 +577,7 @@ export default function ManageUser() {
 
               <div className="d-flex justify-content-between align-items-center mt-3">
                 <div className="text-muted">
-                  {t('manageUser.pagination.showing')} {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, filteredUsers.length)} {t('manageUser.pagination.of')} {filteredUsers.length} {t('manageUser.pagination.entries')}
+                  Hiển thị {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, filteredUsers.length)} trên tổng số {filteredUsers.length} bản ghi
                 </div>
                 <Pagination>
                   <Pagination.First
@@ -629,7 +627,7 @@ export default function ManageUser() {
             </>
           ) : (
             <div className="empty-state">
-              <p>{t('manageUser.table.noUsersFound')}</p>
+              <p>Không tìm thấy người dùng nào phù hợp với bộ lọc</p>
             </div>
           )}
         </div>
@@ -657,7 +655,7 @@ export default function ManageUser() {
         onHide={() => setShowCreateModal(false)}
         businessUnits={businessUnits}
         onUserCreated={() => {
-          toast.info(t('manageUser.messages.searchAgain'));
+          toast.info('Vui lòng tìm kiếm lại bằng mã nhân viên');
         }}
       />
     </Layout>
@@ -665,47 +663,45 @@ export default function ManageUser() {
 }
 
 const AssetDetailModal: FC<AssetDetailModalProps> = ({ show, asset, onHide }) => {
-  const { t } = useTranslation();
-
   return (
     <Modal show={show} onHide={onHide} size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>{t('manageUser.modals.assetDetail.title')}</Modal.Title>
+        <Modal.Title>Thông tin chi tiết thiết bị</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {asset ? (
           <div className="asset-detail">
             <div className="row g-3">
               <div className="col-md-6">
-                <p><strong>{t('manageUser.modals.assetDetail.fields.assetCode')}:</strong> {asset.asset_code}</p>
-                <p><strong>{t('manageUser.modals.assetDetail.fields.assetName')}:</strong> {asset.asset_name}</p>
-                <p><strong>{t('manageUser.modals.assetDetail.fields.deviceType')}:</strong> {asset.category_name}</p>
-                <p><strong>{t('manageUser.modals.assetDetail.fields.brand')}:</strong> {asset.brand}</p>
-                <p><strong>{t('manageUser.modals.assetDetail.fields.model')}:</strong> {asset.model}</p>
-                <p><strong>{t('manageUser.modals.assetDetail.fields.serialNumber')}:</strong> {asset.serial_number}</p>
-                <p><strong>{t('manageUser.modals.assetDetail.fields.os')}:</strong> {asset.OS}</p>
-                <p><strong>{t('manageUser.modals.assetDetail.fields.office')}:</strong> {asset.OFFICE}</p>
+                <p><strong>Mã thiết bị:</strong> {asset.asset_code}</p>
+                <p><strong>Tên thiết bị:</strong> {asset.asset_name}</p>
+                <p><strong>Loại thiết bị:</strong> {asset.category_name}</p>
+                <p><strong>Thương hiệu:</strong> {asset.brand}</p>
+                <p><strong>Model:</strong> {asset.model}</p>
+                <p><strong>Số serial:</strong> {asset.serial_number}</p>
+                <p><strong>Hệ điều hành:</strong> {asset.OS}</p>
+                <p><strong>Office:</strong> {asset.OFFICE}</p>
               </div>
               <div className="col-md-6">
-                <p><strong>{t('manageUser.modals.assetDetail.fields.configuration')}:</strong> {asset.configuration}</p>
-                <p><strong>{t('manageUser.modals.assetDetail.fields.ipAddress')}:</strong> {asset.ip_address}</p>
-                <p><strong>{t('manageUser.modals.assetDetail.fields.macAddress')}:</strong> {asset.mac_address}</p>
-                <p><strong>{t('manageUser.modals.assetDetail.fields.hub')}:</strong> {asset.hub}</p>
-                <p><strong>{t('manageUser.modals.assetDetail.fields.vcsLan')}:</strong> {asset.vcs_lan_no}</p>
-                <p><strong>{t('manageUser.modals.assetDetail.fields.factoryArea')}:</strong> {asset.factory_area}</p>
-                <p><strong>{t('manageUser.modals.assetDetail.fields.location')}:</strong> {asset.location_name}</p>
+                <p><strong>Cấu hình:</strong> {asset.configuration}</p>
+                <p><strong>IP Address:</strong> {asset.ip_address}</p>
+                <p><strong>MAC Address:</strong> {asset.mac_address}</p>
+                <p><strong>Hub:</strong> {asset.hub}</p>
+                <p><strong>VCS LAN:</strong> {asset.vcs_lan_no}</p>
+                <p><strong>Khu vực:</strong> {asset.factory_area}</p>
+                <p><strong>Vị trí:</strong> {asset.location_name}</p>
               </div>
             </div>
           </div>
         ) : (
           <div className="text-center p-4">
             <Spinner animation="border" />
-            <p className="mt-3">{t('manageUser.modals.assetDetail.loading')}</p>
+            <p className="mt-3">Đang tải thông tin chi tiết...</p>
           </div>
         )}
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>{t('manageUser.modals.assetDetail.close')}</Button>
+        <Button variant="secondary" onClick={onHide}>Đóng</Button>
       </Modal.Footer>
     </Modal>
   );
@@ -719,7 +715,6 @@ const EditUserModal: FC<EditUserModalProps> = ({
   departments,
   onUserUpdated,
 }) => {
-  const { t } = useTranslation();
   const [editData, setEditData] = useState<User>(initialData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -749,7 +744,7 @@ const EditUserModal: FC<EditUserModalProps> = ({
         status_account: editData.status_account || 'active'
       };
       await axios.put(`/auth/users/${editData.emp_code}`, payload);
-      toast.success(t('manageUser.messages.userUpdated'));
+      toast.success('Cập nhật người dùng thành công!');
       onUserUpdated({ ...editData, full_name });
       onHide();
     } catch (err: any) {
@@ -762,7 +757,7 @@ const EditUserModal: FC<EditUserModalProps> = ({
   return (
     <Modal show={show} onHide={onHide} size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>{t('manageUser.modals.editUser.title')}</Modal.Title>
+        <Modal.Title>Chỉnh sửa thông tin người dùng</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {error && <Alert variant="danger">{error}</Alert>}
@@ -770,7 +765,7 @@ const EditUserModal: FC<EditUserModalProps> = ({
           <div className="row g-3">
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.userDetail.basicInfo.firstName')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Họ <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   name="first_name"
@@ -782,7 +777,7 @@ const EditUserModal: FC<EditUserModalProps> = ({
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.userDetail.basicInfo.lastName')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Tên <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   name="last_name"
@@ -794,7 +789,7 @@ const EditUserModal: FC<EditUserModalProps> = ({
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.userDetail.basicInfo.email')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Email <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="email"
                   name="email"
@@ -806,14 +801,14 @@ const EditUserModal: FC<EditUserModalProps> = ({
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.userDetail.basicInfo.businessUnit')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Đơn vị (BU) <span className="text-danger">*</span></Form.Label>
                 <Form.Select
                   name="business_unit_id"
                   value={editData.business_unit_id}
                   onChange={handleChange}
                   required
                 >
-                  <option value="">{t('manageUser.modals.createUser.fields.businessUnit')}</option>
+                  <option value="">Chọn đơn vị</option>
                   {businessUnits.map(bu => (
                     <option key={bu.business_unit_id} value={bu.business_unit_id}>
                       {bu.name}
@@ -824,7 +819,7 @@ const EditUserModal: FC<EditUserModalProps> = ({
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.userDetail.basicInfo.department')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Phòng ban <span className="text-danger">*</span></Form.Label>
                 <Form.Select
                   name="department_id"
                   value={editData.department_id}
@@ -832,7 +827,7 @@ const EditUserModal: FC<EditUserModalProps> = ({
                   required
                   disabled={!editData.business_unit_id}
                 >
-                  <option value="">{t('manageUser.modals.createUser.fields.department')}</option>
+                  <option value="">Chọn phòng ban</option>
                   {departments.map(dept => (
                     <option key={dept.department_id} value={dept.department_id}>
                       {dept.department_name}
@@ -841,21 +836,21 @@ const EditUserModal: FC<EditUserModalProps> = ({
                 </Form.Select>
                 {!editData.business_unit_id && (
                   <Form.Text className="text-muted">
-                    {t('manageUser.modals.createUser.selectBusinessUnitFirst')}
+                    Vui lòng chọn đơn vị trước
                   </Form.Text>
                 )}
               </Form.Group>
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.userDetail.basicInfo.position')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Chức vụ <span className="text-danger">*</span></Form.Label>
                 <Form.Select
                   name="position"
                   value={editData.position}
                   onChange={handleChange}
                   required
                 >
-                  <option value="">{t('manageUser.modals.createUser.fields.position')}</option>
+                  <option value="">Chọn chức vụ</option>
                   {POSITION_OPTIONS.map((position, index) => (
                     <option key={index} value={position}>{position}</option>
                   ))}
@@ -864,7 +859,7 @@ const EditUserModal: FC<EditUserModalProps> = ({
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.userDetail.basicInfo.joinDate')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Ngày vào làm <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="date"
                   name="join_date"
@@ -876,22 +871,22 @@ const EditUserModal: FC<EditUserModalProps> = ({
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.modals.createUser.fields.workStatus')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Trạng thái làm việc <span className="text-danger">*</span></Form.Label>
                 <Form.Select
                   name="status_work"
                   value="Working"
                   onChange={handleChange}
                   required
                 >
-                  <option value="Working">{t('manageUser.status.working')}</option>
-                  <option value="On Leave">{t('manageUser.status.onLeave')}</option>
-                  <option value="Resigned">{t('manageUser.status.resigned')}</option>
+                  <option value="Working">Đang làm việc</option>
+                  <option value="On Leave">Đang nghỉ</option>
+                  <option value="Resigned">Đã nghỉ việc</option>
                 </Form.Select>
               </Form.Group>
             </div>
             <div className="col-12">
               <Form.Group>
-                <Form.Label>{t('manageUser.userDetail.basicInfo.note')}</Form.Label>
+                <Form.Label>Ghi chú</Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={3}
@@ -904,10 +899,10 @@ const EditUserModal: FC<EditUserModalProps> = ({
           </div>
           <div className="d-flex gap-2 justify-content-end mt-4">
             <Button variant="secondary" onClick={onHide}>
-              {t('manageUser.modals.editUser.buttons.cancel')}
+              Hủy
             </Button>
             <Button type="submit" variant="primary" disabled={loading}>
-              {loading ? t('manageUser.modals.editUser.buttons.saving') : t('manageUser.modals.editUser.buttons.save')}
+              {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
             </Button>
           </div>
         </Form>
@@ -922,7 +917,6 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
   businessUnits,
   onUserCreated,
 }) => {
-  const { t } = useTranslation();
   const [formData, setFormData] = useState<CreateUserFormData>({
     emp_code: '',
     first_name: '',
@@ -998,7 +992,7 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
         await axios.post('/auth/users/create-folder', {
           emp_code: formData.emp_code
         });
-        toast.success(t('manageUser.messages.userCreated', { empCode: res.data.data.emp_code }));
+        toast.success(`Tạo user ${res.data.data.emp_code} và folder lưu trữ thành công`);
 
         onUserCreated();
         onHide();
@@ -1009,7 +1003,7 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
 
       } catch (folderError) {
         console.error('Lỗi khi tạo folder:', folderError);
-        toast.warning(t('manageUser.messages.folderExists'));
+        toast.warning('Thư mục đã tồn tại');
         onUserCreated();
         onHide();
       }
@@ -1024,7 +1018,7 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
   return (
     <Modal show={show} onHide={onHide} size="lg">
       <Modal.Header closeButton className="bg-primary text-white">
-        <Modal.Title>{t('manageUser.modals.createUser.title')}</Modal.Title>
+        <Modal.Title>Thêm người dùng mới</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {error && <Alert variant="danger">{error}</Alert>}
@@ -1032,7 +1026,7 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
           <div className="row g-3">
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.modals.createUser.fields.employeeCode')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Mã nhân viên <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   name="emp_code"
@@ -1044,7 +1038,7 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.modals.createUser.fields.email')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Email <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="email"
                   name="email"
@@ -1056,7 +1050,7 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.modals.createUser.fields.firstName')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Họ <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   name="first_name"
@@ -1068,7 +1062,7 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.modals.createUser.fields.lastName')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Tên <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   name="last_name"
@@ -1080,7 +1074,7 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.modals.createUser.fields.password')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Mật khẩu <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="password"
                   name="password"
@@ -1092,28 +1086,28 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.modals.createUser.fields.role')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Vai trò <span className="text-danger">*</span></Form.Label>
                 <Form.Select
                   name="role"
                   value={formData.role}
                   onChange={handleChange}
                   required
                 >
-                  <option value="user">{t('manageUser.roles.user')}</option>
-                  <option value="admin">{t('manageUser.roles.admin')}</option>
+                  <option value="user">Người dùng</option>
+                  <option value="admin">Quản trị viên</option>
                 </Form.Select>
               </Form.Group>
             </div>
             <div className="col-md-6">
               <Form.Group className="mb-3">
-                <Form.Label>{t('manageUser.modals.createUser.fields.businessUnit')}</Form.Label>
+                <Form.Label>Đơn vị (BU)</Form.Label>
                 <Form.Select
                   name="business_unit_id"
                   value={formData.business_unit_id}
                   onChange={handleChange}
                   required
                 >
-                  <option value="">{t('manageUser.modals.createUser.fields.businessUnit')}</option>
+                  <option value="">Chọn đơn vị</option>
                   {businessUnits.map(bu => (
                     <option key={bu.business_unit_id} value={bu.business_unit_id}>
                       {bu.name}
@@ -1123,7 +1117,7 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>{t('manageUser.modals.createUser.fields.department')}</Form.Label>
+                <Form.Label>Phòng ban</Form.Label>
                 <Form.Select
                   name="department_id"
                   value={formData.department_id}
@@ -1131,7 +1125,7 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
                   required
                   disabled={!formData.business_unit_id || loadingDepartments}
                 >
-                  <option value="">{t('manageUser.modals.createUser.fields.department')}</option>
+                  <option value="">Chọn phòng ban</option>
                   {modalDepartments.map(dept => (
                     <option key={dept.department_id} value={dept.department_id}>
                       {dept.department_name}
@@ -1141,26 +1135,26 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
                 {loadingDepartments && (
                   <div className="text-muted mt-1" style={{ fontSize: '12px' }}>
                     <Spinner animation="border" size="sm" className="me-1" />
-                    {t('manageUser.filters.loadingDepartments')}
+                    Đang tải phòng ban...
                   </div>
                 )}
                 {!formData.business_unit_id && (
                   <Form.Text className="text-muted">
-                    {t('manageUser.modals.createUser.selectBusinessUnitFirst')}
+                    Vui lòng chọn đơn vị trước
                   </Form.Text>
                 )}
               </Form.Group>
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.modals.createUser.fields.position')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Chức vụ <span className="text-danger">*</span></Form.Label>
                 <Form.Select
                   name="position"
                   value={formData.position}
                   onChange={handleChange}
                   required
                 >
-                  <option value="">{t('manageUser.modals.createUser.fields.position')}</option>
+                  <option value="">Chọn chức vụ</option>
                   {POSITION_OPTIONS.map((position, index) => (
                     <option key={index} value={position}>{position}</option>
                   ))}
@@ -1169,7 +1163,7 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.modals.createUser.fields.joinDate')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Ngày vào làm <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="date"
                   name="join_date"
@@ -1181,22 +1175,22 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
             </div>
             <div className="col-md-6">
               <Form.Group>
-                <Form.Label>{t('manageUser.modals.createUser.fields.workStatus')} <span className="text-danger">*</span></Form.Label>
+                <Form.Label>Trạng thái làm việc <span className="text-danger">*</span></Form.Label>
                 <Form.Select
                   name="status_work"
                   value={formData.status_work}
                   onChange={handleChange}
                   required
                 >
-                  <option value="Working">{t('manageUser.status.working')}</option>
-                  <option value="On Leave">{t('manageUser.status.onLeave')}</option>
-                  <option value="Resigned">{t('manageUser.status.resigned')}</option>
+                  <option value="Working">Đang làm việc</option>
+                  <option value="On Leave">Đang nghỉ</option>
+                  <option value="Resigned">Đã nghỉ việc</option>
                 </Form.Select>
               </Form.Group>
             </div>
             <div className="col-12">
               <Form.Group>
-                <Form.Label>{t('manageUser.modals.createUser.fields.note')}</Form.Label>
+                <Form.Label>Ghi chú</Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={3}
@@ -1209,10 +1203,10 @@ const CreateUserModal: FC<CreateUserModalProps> = ({
           </div>
           <div className="d-flex gap-2 justify-content-end mt-3">
             <Button variant="secondary" onClick={onHide}>
-              {t('manageUser.modals.createUser.buttons.cancel')}
+              Hủy
             </Button>
             <Button type="submit" variant="primary" disabled={loading}>
-              {loading ? t('manageUser.modals.createUser.buttons.creating') : t('manageUser.modals.createUser.buttons.create')}
+              {loading ? 'Đang tạo...' : 'Tạo tài khoản'}
             </Button>
           </div>
         </Form>

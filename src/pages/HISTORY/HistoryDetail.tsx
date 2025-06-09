@@ -13,7 +13,6 @@ import {
 } from 'react-bootstrap';
 import Layout from '../../components/Layout';
 import axios from '../../api/axiosInstance';
-import { useTranslation } from 'react-i18next';
 import './HistoryDetail.css';
 
 interface HistoryDetail {
@@ -68,7 +67,6 @@ interface HistoryDetail {
 }
 
 export default function HistoryDetail() {
-  const { t } = useTranslation();
   const { historyId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -84,7 +82,7 @@ export default function HistoryDetail() {
         console.log('History Detail Response:', response.data);
         setHistoryDetail(response.data);
       } catch (err: any) {
-        setError(err.response?.data?.message || t('historyDetail.notFound'));
+        setError(err.response?.data?.message || 'Không tìm thấy thông tin lịch sử');
       } finally {
         setLoading(false);
       }
@@ -93,74 +91,74 @@ export default function HistoryDetail() {
     if (historyId) {
       fetchHistoryDetail();
     }
-  }, [historyId, t]);
+  }, [historyId]);
 
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'đã đăng ký':
-        return <Badge bg="info" className="history-badge">{t('historyDetail.status.registered')}</Badge>;
+        return <Badge bg="info" className="history-badge">Đã đăng ký</Badge>;
       case 'đang sử dụng':
-        return <Badge bg="success" className="history-badge">{t('historyDetail.status.inUse')}</Badge>;
+        return <Badge bg="success" className="history-badge">Đang sử dụng</Badge>;
       case 'ngưng sử dụng':
-        return <Badge bg="warning" text="dark" className="history-badge">{t('historyDetail.status.stopped')}</Badge>;
+        return <Badge bg="warning" text="dark" className="history-badge">Ngưng sử dụng</Badge>;
       case 'chờ bàn giao':
-        return <Badge bg="warning" text="dark" className="history-badge">{t('historyDetail.status.pendingHandover')}</Badge>;
+        return <Badge bg="warning" text="dark" className="history-badge">Chờ bàn giao</Badge>;
       case 'đã hủy':
-        return <Badge bg="danger" className="history-badge">{t('historyDetail.status.canceled')}</Badge>;
+        return <Badge bg="danger" className="history-badge">Đã hủy</Badge>;
       case 'đã trả lại':
-        return <Badge bg="danger" className="history-badge">{t('historyDetail.status.returned')}</Badge>;
+        return <Badge bg="danger" className="history-badge">Đã trả lại</Badge>;
       case 'khác':
-        return <Badge bg="secondary" className="history-badge">{t('historyDetail.status.other')}</Badge>;
+        return <Badge bg="secondary" className="history-badge">Khác</Badge>;
       case 'cấp phát chờ xóa':
-        return <Badge bg="warning" className="history-badge">{t('historyDetail.status.pendingAllocationDelete')}</Badge>;
+        return <Badge bg="warning" className="history-badge">Cấp phát chờ xóa</Badge>;
       default:
-        return <Badge bg="secondary" className="history-badge">{t('historyDetail.status.notUpdated')}</Badge>;
+        return <Badge bg="secondary" className="history-badge">Chưa cập nhật</Badge>;
     }
   };
 
   const getDeviceStatusBadge = (status: string) => {
     console.log('Device Status:', status);
-    if (!status) return <Badge bg="secondary" className="history-badge">{t('historyDetail.status.notUpdated')}</Badge>;
+    if (!status) return <Badge bg="secondary" className="history-badge">Chưa cập nhật</Badge>;
 
     switch (status.toLowerCase()) {
       case 'đã đăng ký':
-        return <Badge bg="info" className="history-badge">{t('historyDetail.status.registered')}</Badge>;
+        return <Badge bg="info" className="history-badge">Đã đăng ký</Badge>;
       case 'chờ bàn giao':
-        return <Badge bg="info" className="history-badge">{t('historyDetail.status.pendingHandover')}</Badge>;
+        return <Badge bg="info" className="history-badge">Chờ bàn giao</Badge>;
       case 'chưa bàn giao':
-        return <Badge bg="info" className="history-badge">{t('historyDetail.status.notHandover')}</Badge>;
+        return <Badge bg="info" className="history-badge">Chưa bàn giao</Badge>;
       case 'đang sử dụng':
-        return <Badge bg="success" className="history-badge">{t('historyDetail.status.inUse')}</Badge>;
+        return <Badge bg="success" className="history-badge">Đang sử dụng</Badge>;
       case 'ngưng sử dụng':
-        return <Badge bg="warning" text="dark" className="history-badge">{t('historyDetail.status.stopped')}</Badge>;
+        return <Badge bg="warning" text="dark" className="history-badge">Ngưng sử dụng</Badge>;
       case 'đang bị lỗi':
-        return <Badge bg="danger" className="history-badge">{t('historyDetail.status.error')}</Badge>;
+        return <Badge bg="danger" className="history-badge">Đang bị lỗi</Badge>;
       case 'đang cài đặt':
-        return <Badge bg="warning" text="dark" className="history-badge">{t('historyDetail.status.installing')}</Badge>;
+        return <Badge bg="warning" text="dark" className="history-badge">Đang cài đặt</Badge>;
       case 'đang đổi máy':
-        return <Badge bg="primary" className="history-badge">{t('historyDetail.status.changingDevice')}</Badge>;
+        return <Badge bg="primary" className="history-badge">Đang đổi máy</Badge>;
       case 'đang chờ xóa':
       case 'chờ xóa':
-        return <Badge bg="danger" className="history-badge">{t('historyDetail.status.pendingDelete')}</Badge>;
+        return <Badge bg="danger" className="history-badge">Đang chờ xóa</Badge>;
       case 'đã trả lại':
-        return <Badge bg="danger" className="history-badge">{t('historyDetail.status.returned')}</Badge>;
+        return <Badge bg="danger" className="history-badge">Đã trả lại</Badge>;
       case 'new':
-        return <Badge bg="success" className="history-badge">{t('historyDetail.status.new')}</Badge>;
+        return <Badge bg="success" className="history-badge">Mới</Badge>;
       case 'đã hủy':
-        return <Badge bg="danger" className="history-badge">{t('historyDetail.status.canceled')}</Badge>;
+        return <Badge bg="danger" className="history-badge">Đã hủy</Badge>;
       case 'đã xóa':
-        return <Badge bg="danger" className="history-badge">{t('historyDetail.status.deleted')}</Badge>;
+        return <Badge bg="danger" className="history-badge">Đã xóa</Badge>;
       case 'khác':
-        return <Badge bg="secondary" className="history-badge">{t('historyDetail.status.other')}</Badge>;
+        return <Badge bg="secondary" className="history-badge">Khác</Badge>;
       case 'cấp phát chờ xóa':
-        return <Badge bg="warning" className="history-badge">{t('historyDetail.status.pendingAllocationDelete')}</Badge>;
+        return <Badge bg="warning" className="history-badge">Cấp phát chờ xóa</Badge>;
       default:
         return <Badge bg="secondary" className="history-badge">{status}</Badge>;
     }
   };
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return t('historyDetail.status.notUpdated');
+    if (!dateString) return 'Chưa cập nhật';
     const date = new Date(dateString);
     return date.toLocaleDateString('vi-VN', {
       year: 'numeric',
@@ -175,7 +173,7 @@ export default function HistoryDetail() {
         <Container className="d-flex justify-content-center align-items-center vh-100">
           <div className="text-center">
             <Spinner animation="border" variant="primary" />
-            <p className="mt-3 text-muted">{t('historyDetail.loading')}</p>
+            <p className="mt-3 text-muted">Đang tải dữ liệu...</p>
           </div>
         </Container>
       </Layout>
@@ -186,9 +184,9 @@ export default function HistoryDetail() {
     return (
       <Layout>
         <Container className="d-flex justify-content-center align-items-center vh-100 flex-column">
-          <p className="text-danger">{error || t('historyDetail.notFound')}</p>
+          <p className="text-danger">{error || 'Không tìm thấy thông tin lịch sử'}</p>
           <Button variant="primary" onClick={() => navigate('/history')}>
-            &larr; {t('historyDetail.backToList')}
+            &larr; Quay lại danh sách
           </Button>
         </Container>
       </Layout>
@@ -200,9 +198,9 @@ export default function HistoryDetail() {
       <Container className="history-detail-container py-4">
         {/* Header */}
         <div className="history-detail-header mb-4">
-          <h4 className="page-title">{t('historyDetail.title')}</h4>
+          <h4 className="page-title">Chi tiết lịch sử sử dụng</h4>
           <Button variant="outline-primary" onClick={() => navigate('/history')}>
-            &larr; {t('historyDetail.backToList')}
+            &larr; Quay lại danh sách
           </Button>
         </div>
 
@@ -215,129 +213,129 @@ export default function HistoryDetail() {
           transition
         >
           {/* Tab: Thông tin thiết bị */}
-          <Tab eventKey="device" title={t('historyDetail.tabs.device')}>
+          <Tab eventKey="device" title="Thông tin thiết bị">
             <Card className="history-detail-card shadow-sm mb-3 animate-fadeIn">
               <Card.Header className="card-header-gradient d-flex align-items-center">
                 <i className="bi bi-laptop me-2 fs-5"></i>
-                <h5 className="mb-0">{t('historyDetail.deviceInfo.title')}</h5>
+                <h5 className="mb-0">Thông tin thiết bị</h5>
               </Card.Header>
               <Card.Body>
                 <Row xs={1} md={2} lg={4} className="g-3">
                   <Col>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.assetCode')}:</label>
+                      <label>Mã thiết bị:</label>
                       <span className="fw-bold highlight">{historyDetail.asset_code}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.assetName')}:</label>
+                      <label>Tên thiết bị:</label>
                       <span className="fw-semibold">{historyDetail.asset_name}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.brand')}:</label>
-                      <span>{historyDetail.brand || t('historyDetail.status.notUpdated')}</span>
+                      <label>Thương hiệu:</label>
+                      <span>{historyDetail.brand || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.model')}:</label>
-                      <span>{historyDetail.model || t('historyDetail.status.notUpdated')}</span>
+                      <label>Model:</label>
+                      <span>{historyDetail.model || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.serialNumber')}:</label>
-                      <span>{historyDetail.serial_number || t('historyDetail.status.notUpdated')}</span>
+                      <label>Số serial:</label>
+                      <span>{historyDetail.serial_number || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.deviceType')}:</label>
-                      <span>{historyDetail.type || t('historyDetail.status.notUpdated')}</span>
+                      <label>Loại thiết bị:</label>
+                      <span>{historyDetail.type || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.deviceStatus')}:</label>
+                      <label>Trạng thái thiết bị:</label>
                       <span>{getDeviceStatusBadge(historyDetail.status_name)}</span>
                     </div>
                   </Col>
                   <Col>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.status')}:</label>
+                      <label>Trạng thái:</label>
                       <span>{getStatusBadge(historyDetail.history_status)}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.os')}:</label>
-                      <span>{historyDetail.os || t('historyDetail.status.notUpdated')}</span>
+                      <label>Hệ điều hành:</label>
+                      <span>{historyDetail.os || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.office')}:</label>
-                      <span>{historyDetail.office || t('historyDetail.status.notUpdated')}</span>
+                      <label>Office:</label>
+                      <span>{historyDetail.office || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.softwareUsed')}:</label>
-                      <span>{historyDetail.software_used?.join(', ') || t('historyDetail.status.notUpdated')}</span>
+                      <label>Phần mềm sử dụng:</label>
+                      <span>{historyDetail.software_used?.join(', ') || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.configuration')}:</label>
-                      <span>{historyDetail.configuration || t('historyDetail.status.notUpdated')}</span>
+                      <label>Cấu hình:</label>
+                      <span>{historyDetail.configuration || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.maintenanceCycle')}:</label>
+                      <label>Chu kỳ bảo trì:</label>
                       <span>
                         {historyDetail.maintenance_cycle
                           ? historyDetail.maintenance_cycle + ' tháng'
-                          : t('historyDetail.status.notUpdated')
+                          : 'Chưa cập nhật'
                         }
                       </span>
                     </div>
                   </Col>
                   <Col>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.ipAddress')}:</label>
-                      <span>{historyDetail.ip_address || t('historyDetail.status.notUpdated')}</span>
+                      <label>Địa chỉ IP:</label>
+                      <span>{historyDetail.ip_address || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.macAddress')}:</label>
-                      <span>{historyDetail.mac_address || t('historyDetail.status.notUpdated')}</span>
+                      <label>Địa chỉ MAC:</label>
+                      <span>{historyDetail.mac_address || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.hub')}:</label>
-                      <span>{historyDetail.hub || t('historyDetail.status.notUpdated')}</span>
+                      <label>Hub:</label>
+                      <span>{historyDetail.hub || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.vcsLanNo')}:</label>
-                      <span>{historyDetail.vcs_lan_no || t('historyDetail.status.notUpdated')}</span>
+                      <label>Số LAN VCS:</label>
+                      <span>{historyDetail.vcs_lan_no || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.oldIp')}:</label>
-                      <span>{historyDetail.old_ip || t('historyDetail.status.notUpdated')}</span>
+                      <label>IP cũ:</label>
+                      <span>{historyDetail.old_ip || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.upgradeInfo')}:</label>
-                      <span>{historyDetail.upgrade_infor || t('historyDetail.status.notUpdated')}</span>
+                      <label>Thông tin nâng cấp:</label>
+                      <span>{historyDetail.upgrade_infor || 'Chưa cập nhật'}</span>
                     </div>
                   </Col>
                   <Col>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.startUseDate')}:</label>
+                      <label>Ngày bắt đầu sử dụng:</label>
                       <span>{formatDate(historyDetail.start_use_date)}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.factoryArea')}:</label>
-                      <span>{historyDetail.factory_area || t('historyDetail.status.notUpdated')}</span>
+                      <label>Khu vực nhà máy:</label>
+                      <span>{historyDetail.factory_area || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.location')}:</label>
-                      <span>{historyDetail.location_id || t('historyDetail.status.notUpdated')}</span>
+                      <label>Vị trí:</label>
+                      <span>{historyDetail.location_id || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.purchaseDate')}:</label>
+                      <label>Ngày mua:</label>
                       <span>{formatDate(historyDetail.purchase_date)}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.purchasePrice')}:</label>
+                      <label>Giá mua:</label>
                       <span>
                         {historyDetail.purchase_price
                           ? new Intl.NumberFormat('vi-VN').format(historyDetail.purchase_price) + ' VNĐ'
-                          : t('historyDetail.status.notUpdated')
+                          : 'Chưa cập nhật'
                         }
                       </span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.deviceInfo.warrantyExpiry')}:</label>
+                      <label>Hạn bảo hành:</label>
                       <span>{formatDate(historyDetail.warranty_expiry)}</span>
                     </div>
                   </Col>
@@ -346,72 +344,70 @@ export default function HistoryDetail() {
             </Card>
           </Tab>
 
-          {/* Tab: Thông tin người sử dụng */}
-          <Tab eventKey="user" title={t('historyDetail.tabs.user')}>
+          {/* Tab: Thông tin người sử dụng và ghi chú */}
+          <Tab eventKey="user" title="Thông tin người sử dụng">
             <Card className="history-detail-card shadow-sm mb-3 animate-fadeIn">
               <Card.Header className="card-header-gradient d-flex align-items-center">
                 <i className="bi bi-person me-2 fs-5"></i>
-                <h5 className="mb-0">{t('historyDetail.userInfo.title')}</h5>
+                <h5 className="mb-0">Thông tin người sử dụng</h5>
               </Card.Header>
               <Card.Body>
                 <Row xs={1} md={2} className="g-3">
                   <Col>
                     <div className="info-item">
-                      <label>{t('historyDetail.userInfo.employeeCode')}:</label>
+                      <label>Mã nhân viên:</label>
                       <span className="fw-bold highlight">{historyDetail.employee_code}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.userInfo.employeeName')}:</label>
+                      <label>Họ và tên:</label>
                       <span className="fw-semibold">{historyDetail.employee_name}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.userInfo.role')}:</label>
+                      <label>Vai trò:</label>
                       <span className="fw-semibold">
-                        {historyDetail.is_handover ? t('historyDetail.userInfo.mainUser') : t('historyDetail.userInfo.sharedUser')}
+                        {historyDetail.is_handover ? 'Người sử dụng chính' : 'Người dùng chung'}
                       </span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.userInfo.department')}:</label>
-                      <span>{historyDetail.department_name || t('historyDetail.status.notUpdated')}</span>
+                      <label>Phòng ban:</label>
+                      <span>{historyDetail.department_name || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.userInfo.handoverBy')}:</label>
-                      <span>{historyDetail.handover_by_name || t('historyDetail.status.notUpdated')}</span>
+                      <label>Người bàn giao:</label>
+                      <span>{historyDetail.handover_by_name || 'Chưa cập nhật'}</span>
                     </div>
                   </Col>
                   <Col>
                     <div className="info-item">
-                      <label>{t('historyDetail.userInfo.handoverByCode')}:</label>
-                      <span>{historyDetail.handover_by_code || t('historyDetail.status.notUpdated')}</span>
+                      <label>Mã người bàn giao:</label>
+                      <span>{historyDetail.handover_by_code || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.userInfo.handoverDate')}:</label>
+                      <label>Ngày bàn giao:</label>
                       <span>{formatDate(historyDetail.handover_date)}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.userInfo.returnDate')}:</label>
+                      <label>Ngày trả:</label>
                       <span>{formatDate(historyDetail.returned_date)}</span>
                     </div>
                     <div className="info-item">
-                      <label>{t('historyDetail.userInfo.floor')}:</label>
-                      <span>{historyDetail.floor || t('historyDetail.status.notUpdated')}</span>
+                      <label>Tầng:</label>
+                      <span>{historyDetail.floor || 'Chưa cập nhật'}</span>
                     </div>
                   </Col>
                 </Row>
               </Card.Body>
             </Card>
-          </Tab>
 
-          {/* Tab: Ghi chú */}
-          <Tab eventKey="note" title={t('historyDetail.tabs.note')}>
+            {/* Ghi chú */}
             <Card className="history-detail-card shadow-sm mb-3 animate-fadeIn">
               <Card.Header className="card-header-gradient d-flex align-items-center">
                 <i className="bi bi-sticky me-2 fs-5"></i>
-                <h5 className="mb-0">{t('historyDetail.note.title')}</h5>
+                <h5 className="mb-0">Ghi chú</h5>
               </Card.Header>
               <Card.Body>
                 <div className="history-detail-note">
-                  {historyDetail.note || t('historyDetail.note.noNote')}
+                  {historyDetail.note || 'Không có ghi chú'}
                 </div>
               </Card.Body>
             </Card>

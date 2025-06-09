@@ -282,8 +282,8 @@ export default function UpdateUserModal({ show, onHide, user, onUserUpdated }: U
                                         onChange={handleChange}
                                         required
                                     >
-                                        <option value="user">User</option>
-                                        <option value="admin">Admin</option>
+                                        <option value="user">Người dùng</option>
+                                        <option value="admin">Quản trị viên</option>
                                     </Form.Select>
                                 </Form.Group>
                             </div>
@@ -319,9 +319,9 @@ export default function UpdateUserModal({ show, onHide, user, onUserUpdated }: U
                                         onChange={handleChange}
                                         required
                                     >
-                                        <option value="Working">Working</option>
-                                        <option value="On Leave">On Leave</option>
-                                        <option value="Resigned">Resigned</option>
+                                        <option value="Working">Đang làm việc</option>
+                                        <option value="On Leave">Đang nghỉ</option>
+                                        <option value="Resigned">Đã nghỉ việc</option>
                                     </Form.Select>
                                 </Form.Group>
                             </div>
@@ -334,8 +334,8 @@ export default function UpdateUserModal({ show, onHide, user, onUserUpdated }: U
                                         onChange={handleChange}
                                         required
                                     >
-                                        <option value="active">Active</option>
-                                        <option value="inactive">Inactive</option>
+                                        <option value="active">Hoạt động</option>
+                                        <option value="inactive">Không hoạt động</option>
                                     </Form.Select>
                                 </Form.Group>
                             </div>

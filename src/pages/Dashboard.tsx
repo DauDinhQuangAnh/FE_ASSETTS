@@ -5,9 +5,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { FaDesktop, FaMobileAlt, FaTabletAlt, FaServer, FaNetworkWired, FaPrint, FaHeadset, FaKeyboard, FaMouse, FaUserShield, FaHistory, FaTrash, FaFileExport, FaUser } from 'react-icons/fa';
 import './Dashboard.css';
 import axiosInstance from '../api/axiosInstance';
-import { useTranslation } from 'react-i18next';
-
-
 
 // Data ảnh slider mẫu (bạn có thể thay URL ảnh tùy ý)
 const sliderImages = [
@@ -22,55 +19,52 @@ interface Category {
 }
 
 // Core system features
-const getFeatures = (t: any) => [
+const getFeatures = () => [
   {
     id: 1,
-    name: t('dashboard.features.assetManagement.title'),
+    name: "Quản lý thiết bị",
     icon: <FaDesktop />,
-    description: t('dashboard.features.assetManagement.description'),
+    description: "Theo dõi và quản lý tất cả thiết bị trong tổ chức",
     href: "/manage-assets"
   },
   {
     id: 2,
-    name: t('dashboard.features.userManagement.title'),
+    name: "Quản lý người dùng",
     icon: <FaUser />,
-    description: t('dashboard.features.userManagement.description'),
+    description: "Quản lý người dùng và kiểm soát quyền truy cập",
     href: "/user-management"
   },
   {
     id: 3,
-    name: t('dashboard.features.assetHistory.title'),
+    name: "Lịch sử thiết bị",
     icon: <FaHistory />,
-    description: t('dashboard.features.assetHistory.description'),
+    description: "Xem lịch sử thay đổi của thiết bị",
     href: "/history-status"
   },
   {
     id: 4,
-    name: t('dashboard.features.segmentList.title'),
+    name: "Danh sách phân đoạn",
     icon: <FaUserShield />,
-    description: t('dashboard.features.segmentList.description'),
+    description: "Xem danh sách các phân đoạn mạng",
     href: "/ip-division"
   },
   {
     id: 5,
-    name: t('dashboard.features.exportIP.title'),
+    name: "Xuất IP",
     icon: <FaFileExport />,
-    description: t('dashboard.features.exportIP.description'),
+    description: "Xuất danh sách các địa chỉ IP đã cấp phát",
     href: "/export-ip"
   },
   {
     id: 6,
-    name: t('dashboard.features.ipHistory.title'),
+    name: "Lịch sử IP",
     icon: <FaHistory />,
-    description: t('dashboard.features.ipHistory.description'),
+    description: "Xem lịch sử thay đổi của địa chỉ IP",
     href: "/ip-history"
   }
 ];
 
-
-
 export default function Dashboard() {
-  const { t } = useTranslation();
   const [stats, setStats] = useState({
     total: 0,
     "Đang sử dụng": 0,
@@ -82,7 +76,7 @@ export default function Dashboard() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryLoading, setCategoryLoading] = useState(true);
   const navigate = useNavigate();
-  const features = getFeatures(t);
+  const features = getFeatures();
 
   // Fetch categories
   useEffect(() => {
@@ -197,8 +191,8 @@ export default function Dashboard() {
       <div className="dashboard-container">
         {/* Header */}
         <div className="dashboard-header mb-4">
-          <h2 className="dashboard-title">{t('dashboard.title')}</h2>
-          <p className="dashboard-subtitle">{t('dashboard.subtitle')}</p>
+          <h2 className="dashboard-title">Hệ thống Quản lý Thiết bị SMV</h2>
+          <p className="dashboard-subtitle">Giải pháp toàn diện cho việc quản lý và theo dõi thiết bị trong tổ chức</p>
         </div>
 
         {/* Slider */}
@@ -211,8 +205,8 @@ export default function Dashboard() {
                 alt={`slide-${idx}`}
               />
               <Carousel.Caption>
-                <h3>{t('dashboard.carousel.title')}</h3>
-                <p>{t('dashboard.carousel.description')}</p>
+                <h3>Quản lý thiết bị thông minh</h3>
+                <p>Giải pháp toàn diện cho việc theo dõi và quản lý thiết bị</p>
               </Carousel.Caption>
             </Carousel.Item>
           ))}
@@ -220,7 +214,7 @@ export default function Dashboard() {
 
         {/* Thống kê */}
         <div className="stats-section mb-4">
-          <h3 className="section-title">{t('dashboard.stats.title')}</h3>
+          <h3 className="section-title">Thống kê tổng quan</h3>
           {error && (
             <div className="alert alert-danger" role="alert">
               {error}
@@ -234,8 +228,8 @@ export default function Dashboard() {
                     <FaDesktop />
                   </div>
                   <div className="stats-info">
-                    <h4>{loading ? t('dashboard.loading') : stats.total}</h4>
-                    <p>{t('dashboard.stats.totalDevices')}</p>
+                    <h4>{loading ? 'Đang tải...' : stats.total}</h4>
+                    <p>Tổng số thiết bị</p>
                   </div>
                 </Card.Body>
               </Card>
@@ -247,8 +241,8 @@ export default function Dashboard() {
                     <FaUserShield />
                   </div>
                   <div className="stats-info">
-                    <h4>{loading ? t('dashboard.loading') : stats["Đang sử dụng"]}</h4>
-                    <p>{t('dashboard.stats.inUse')}</p>
+                    <h4>{loading ? 'Đang tải...' : stats["Đang sử dụng"]}</h4>
+                    <p>Đang sử dụng</p>
                   </div>
                 </Card.Body>
               </Card>
@@ -260,8 +254,8 @@ export default function Dashboard() {
                     <FaHistory />
                   </div>
                   <div className="stats-info">
-                    <h4>{loading ? t('dashboard.loading') : stats["Đang cài đặt"]}</h4>
-                    <p>{t('dashboard.stats.installing')}</p>
+                    <h4>{loading ? 'Đang tải...' : stats["Đang cài đặt"]}</h4>
+                    <p>Đang cài đặt</p>
                   </div>
                 </Card.Body>
               </Card>
@@ -273,8 +267,8 @@ export default function Dashboard() {
                     <FaTrash />
                   </div>
                   <div className="stats-info">
-                    <h4>{loading ? t('dashboard.loading') : stats["Chờ xóa"]}</h4>
-                    <p>{t('dashboard.stats.pendingDelete')}</p>
+                    <h4>{loading ? 'Đang tải...' : stats["Chờ xóa"]}</h4>
+                    <p>Chờ xóa</p>
                   </div>
                 </Card.Body>
               </Card>
@@ -284,7 +278,7 @@ export default function Dashboard() {
 
         {/* Tính năng chính */}
         <div className="features-section mb-4">
-          <h3 className="section-title">{t('dashboard.features.title')}</h3>
+          <h3 className="section-title">Tính năng chính</h3>
           <Row>
             {features.map(feature => (
               <Col md={4} sm={6} key={feature.id}>
@@ -298,7 +292,7 @@ export default function Dashboard() {
                       className="mt-auto btn btn-primary btn-sm"
                       style={{ textDecoration: 'none' }}
                     >
-                      {t('dashboard.features.viewDetails')}
+                      Xem chi tiết
                     </NavLink>
                   </Card.Body>
                 </Card>
@@ -309,11 +303,11 @@ export default function Dashboard() {
 
         {/* Loại thiết bị */}
         <div className="device-types-section mb-4">
-          <h3 className="section-title">{t('dashboard.deviceTypes.title')}</h3>
+          <h3 className="section-title">Loại thiết bị</h3>
           {categoryLoading ? (
             <div className="text-center">
               <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">{t('dashboard.loading')}</span>
+                <span className="visually-hidden">Đang tải...</span>
               </div>
             </div>
           ) : (

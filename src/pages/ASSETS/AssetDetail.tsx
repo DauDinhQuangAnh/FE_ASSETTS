@@ -6,8 +6,30 @@ import axios from '../../api/axiosInstance';
 import { AxiosError } from 'axios';
 import styles from './AssetDetail.module.css';
 import type { Asset, AssetHistory } from '../../types/typeAsset';
-import { useTranslation } from 'react-i18next';
 import { updateNetworkSegment } from '../../services/networkSegmentService';
+import { fetchNetworkSegments } from '../../services/networkSegmentService';
+
+const FLOOR_VLANS = {
+  '1F': ['166'],
+  '2F': ['168'],
+  'BF': ['164']
+} as const;
+
+interface NetworkSegment {
+  'IP address': string;
+  [key: string]: any;
+}
+
+interface MultiAssignData {
+  [empId: number]: {
+    floors: {
+      [floor: string]: {
+        ipType: 'DHCP' | 'FIXED';
+        ip: string;
+      }
+    }
+  }
+}
 
 export default function AssetDetail() {
   const { assetCode } = useParams();
@@ -45,9 +67,8 @@ export default function AssetDetail() {
   const [searchEmployee, setSearchEmployee] = useState('');
   const [assignPage, setAssignPage] = useState(1);
   const [assignRowsPerPage, setAssignRowsPerPage] = useState(10);
-  const [multiAssignData, setMultiAssignData] = useState<{ [empId: number]: { floor?: string, ip?: string, ipType?: 'DHCP' | 'FIXED' } }>({});
-  const [multiAvailableIPs, setMultiAvailableIPs] = useState<{ [empId: number]: string[] }>({});
-  const { t } = useTranslation();
+  const [multiAssignData, setMultiAssignData] = useState<MultiAssignData>({});
+  const [multiAvailableIPs, setMultiAvailableIPs] = useState<{ [floor: string]: string[] }>({});
 
   useEffect(() => {
     const fetchAssetDetails = async () => {
@@ -134,33 +155,108 @@ export default function AssetDetail() {
     }
   };
 
-  const fetchMultiIPs = async (empId: number, floor: string, ipType: 'DHCP' | 'FIXED' = 'DHCP') => {
-    let fakeIPs: string[] = [];
-    if (floor === '1F') fakeIPs = ipType === 'DHCP' ? ['172.25.166.10', '172.25.166.11'] : ['172.25.166.100', '172.25.166.101'];
-    else if (floor === '2F') fakeIPs = ipType === 'DHCP' ? ['172.25.168.20', '172.25.168.21'] : ['172.25.168.120', '172.25.168.121'];
-    else fakeIPs = ipType === 'DHCP' ? ['172.25.164.30'] : ['172.25.164.130'];
-    setMultiAvailableIPs(prev => ({ ...prev, [empId]: fakeIPs }));
-  };
-
   const handleMultiAssignFloorChange = async (empId: number, floor: string, ipType: 'DHCP' | 'FIXED' = 'DHCP') => {
-    setMultiAssignData(prev => ({ ...prev, [empId]: { ...prev[empId], floor, ip: '', ipType } }));
+    setMultiAssignData(prev => {
+      const empData = prev[empId] || { floors: {} };
+      const floorData = empData.floors[floor] || { ipType, ip: '' };
+
+      return {
+        ...prev,
+        [empId]: {
+          floors: {
+            ...empData.floors,
+            [floor]: {
+              ...floorData,
+              ipType
+            }
+          }
+        }
+      };
+    });
+
     if (floor) {
-      await fetchMultiIPs(empId, floor, ipType);
-    } else {
-      setMultiAvailableIPs(prev => ({ ...prev, [empId]: [] }));
+      await fetchMultiIPs(floor, ipType);
     }
   };
 
-  const handleMultiAssignIPTypeChange = async (empId: number, ipType: 'DHCP' | 'FIXED') => {
-    const floor = multiAssignData[empId]?.floor || '';
-    setMultiAssignData(prev => ({ ...prev, [empId]: { ...prev[empId], ipType, ip: '' } }));
-    if (floor) {
-      await fetchMultiIPs(empId, floor, ipType);
-    }
+  const handleMultiAssignIPTypeChange = async (empId: number, floor: string, ipType: 'DHCP' | 'FIXED') => {
+    setMultiAssignData(prev => {
+      const empData = prev[empId] || { floors: {} };
+      const floorData = empData.floors[floor] || { ipType, ip: '' };
+
+      return {
+        ...prev,
+        [empId]: {
+          floors: {
+            ...empData.floors,
+            [floor]: {
+              ...floorData,
+              ipType,
+              ip: '' // Reset IP when changing type
+            }
+          }
+        }
+      };
+    });
+
+    await fetchMultiIPs(floor, ipType);
   };
 
-  const handleMultiAssignIPChange = (empId: number, ip: string) => {
-    setMultiAssignData(prev => ({ ...prev, [empId]: { ...prev[empId], ip } }));
+  const handleMultiAssignIPChange = (empId: number, floor: string, ip: string) => {
+    setMultiAssignData(prev => {
+      const empData = prev[empId] || { floors: {} };
+      const floorData = empData.floors[floor] || { ipType: 'DHCP', ip: '' };
+
+      return {
+        ...prev,
+        [empId]: {
+          floors: {
+            ...empData.floors,
+            [floor]: {
+              ...floorData,
+              ip
+            }
+          }
+        }
+      };
+    });
+  };
+
+  const fetchMultiIPs = async (floor: string, ipType: 'DHCP' | 'FIXED' = 'DHCP') => {
+    const vlans = FLOOR_VLANS[floor as keyof typeof FLOOR_VLANS];
+    const ips: string[] = [];
+
+    for (const vlan of vlans) {
+      try {
+        const segments = await fetchNetworkSegments({
+          vlan,
+          ipUsage: 'unused1',
+          searchTerm: ipType.toLowerCase()
+        });
+        const floorIPs = segments.map((segment: NetworkSegment) => segment['IP address']);
+        const uniqueIPs = floorIPs.filter((ip: string) => !ips.includes(ip));
+        ips.push(...uniqueIPs);
+      } catch (error) {
+        console.error(`Error fetching IPs for floor ${floor}, vlan ${vlan}:`, error);
+      }
+    }
+
+    const sortedIPs = ips.sort((a, b) => {
+      const aParts = a.split('.').map(Number);
+      const bParts = b.split('.').map(Number);
+
+      for (let i = 0; i < 4; i++) {
+        if (aParts[i] !== bParts[i]) {
+          return ipType === 'FIXED' ? bParts[i] - aParts[i] : aParts[i] - bParts[i];
+        }
+      }
+      return 0;
+    });
+
+    setMultiAvailableIPs(prev => ({
+      ...prev,
+      [floor]: sortedIPs
+    }));
   };
 
   const validateMultiAssign = () => {
@@ -169,12 +265,18 @@ export default function AssetDetail() {
       if (!emp) continue;
       const status = asset?.status_name || 'New';
 
-      if (status !== 'Chờ xóa' && status !== 'Chờ xóa') {
-        if (!multiAssignData[empId]?.floor) {
-          return `Nhân viên ${emp.full_name} phải chọn tầng!`;
+      if (status !== 'Chờ xóa') {
+        const empData = multiAssignData[empId];
+        if (!empData || Object.keys(empData.floors).length === 0) {
+          return `Nhân viên ${emp.full_name} phải chọn ít nhất một tầng!`;
         }
-        if (status !== 'Đang sử dụng' && !multiAssignData[empId]?.ip) {
-          return `Nhân viên ${emp.full_name} phải chọn IP!`;
+
+        if (status !== 'Đang sử dụng') {
+          for (const [floor, floorData] of Object.entries(empData.floors)) {
+            if (!floorData.ip) {
+              return `Nhân viên ${emp.full_name} phải chọn IP cho tầng ${floor}!`;
+            }
+          }
         }
       }
     }
@@ -230,29 +332,40 @@ export default function AssetDetail() {
 
           await axios.post(`/asset/users/${emp.emp_code}/assign-delete-asset`, payload);
         } else {
-          const assignData = multiAssignData[empId] || {};
+          const empData = multiAssignData[empId];
           const employeeId = localStorage.getItem('employee_id');
+
+          // Collect all IPs from all floors
+          const allIPs: string[] = [];
+          for (const floorData of Object.values(empData.floors)) {
+            if (floorData.ip) {
+              allIPs.push(floorData.ip);
+            }
+          }
 
           const payload = {
             asset_id: asset?.asset_id,
             department_id: emp.department_id,
             handover_by: employeeId,
-            floor: assignData.floor || '',
+            floor: Object.keys(empData.floors).join(' '),
             history_status: 'Đã đăng ký',
             note: `Cấp phát thiết bị ${asset?.asset_code} cho nhân viên ${emp.full_name}`,
             is_handover: asset?.status_name === 'Đang sử dụng' ? false : true,
-            ip_address: assignData.ip ? [assignData.ip] : []
+            ip_address: allIPs
           };
 
           await axios.post(`/auth/users/${emp.emp_code}/assign-asset`, payload);
 
-          if (assignData.ip) {
-            const ipUpdate = {
-              ip: assignData.ip,
-              status: "Registered",
-              ipType: assignData.ipType || 'DHCP'
-            };
-            await updateNetworkSegment(ipUpdate);
+          // Update network segments for all IPs
+          for (const [_, floorData] of Object.entries(empData.floors)) {
+            if (floorData.ip) {
+              const ipUpdate = {
+                ip: floorData.ip,
+                status: "Registered",
+                ipType: floorData.ipType
+              };
+              await updateNetworkSegment(ipUpdate);
+            }
           }
         }
       }
@@ -363,24 +476,7 @@ export default function AssetDetail() {
     return parts.join('.') + ',000 VNĐ';
   };
 
-  const repairStatusToKey = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'đã yêu cầu sửa':
-      case 'requested':
-        return 'requested';
-      case 'đang sửa chữa':
-      case 'repairing':
-        return 'repairing';
-      case 'đã sửa xong và chưa bàn giao':
-      case 'fixed':
-        return 'fixed';
-      case 'đã bàn giao':
-      case 'delivered':
-        return 'delivered';
-      default:
-        return status;
-    }
-  };
+
 
   const statusNameToKey = (statusName: string) => {
     switch (statusName?.toLowerCase()) {
@@ -589,7 +685,7 @@ export default function AssetDetail() {
       <Layout>
         <Container className={styles.loadingContainer}>
           <Spinner animation="border" variant="primary" />
-          <p>{t('manageAssets.loading')}</p>
+          <p>Đang tải...</p>
         </Container>
       </Layout>
     );
@@ -599,9 +695,9 @@ export default function AssetDetail() {
     return (
       <Layout>
         <Container className={styles.errorContainer}>
-          <p className="text-danger">{error || t('manageAssets.messages.loadError')}</p>
+          <p className="text-danger">{error || 'Không thể tải thông tin chi tiết thiết bị'}</p>
           <Button variant="primary" onClick={() => navigate('/manage-assets')}>
-            {t('header.backToList')}
+            Quay lại danh sách
           </Button>
         </Container>
       </Layout>
@@ -613,13 +709,13 @@ export default function AssetDetail() {
       <div className={styles.assetDetailContainer}>
         <div className={styles.headerSection}>
           <div className="d-flex justify-content-between align-items-center">
-            <h1 className={styles.headerTitle}>{t('manageAssets.modals.detail.title')}</h1>
+            <h1 className={styles.headerTitle}>Chi tiết thiết bị</h1>
             <div className="d-flex gap-2">
               <Button variant="primary" onClick={() => setShowAssignModal(true)}>
                 <i className="fas fa-user-plus me-2"></i> Cấp phát thiết bị
               </Button>
               <Button variant="light" onClick={() => navigate('/manage-assets')}>
-                {t('header.backToList')}
+                Quay lại danh sách
               </Button>
             </div>
           </div>
@@ -628,90 +724,90 @@ export default function AssetDetail() {
           <Col md={6}>
             <Card className={styles.infoCard}>
               <Card.Header className="bg-primary text-white">
-                <h5 className="mb-0">{t('manageAssets.modals.detail.title')}</h5>
+                <h5 className="mb-0">Thông tin thiết bị</h5>
               </Card.Header>
               <Card.Body>
                 <Row className="g-2">
                   <Col md={6}>
                     <div className={styles.infoGroup}>
-                      <strong>{t('manageAssets.modals.add.fields.assetCode')}:</strong> <span>{asset.asset_code}</span>
+                      <strong>Mã thiết bị:</strong> <span>{asset.asset_code}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>{t('manageAssets.modals.add.fields.assetName')}:</strong> <span>{asset.asset_name}</span>
+                      <strong>Tên thiết bị:</strong> <span>{asset.asset_name}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>{t('manageAssets.modals.add.fields.type')}:</strong> <span>{asset.category_name}</span>
+                      <strong>Loại thiết bị:</strong> <span>{asset.category_name}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>{t('manageAssets.modals.add.fields.brand')}:</strong> <span>{asset.brand}</span>
+                      <strong>Thương hiệu:</strong> <span>{asset.brand}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>{t('manageAssets.modals.add.fields.model')}:</strong> <span>{asset.model}</span>
+                      <strong>Model:</strong> <span>{asset.model}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>{t('manageAssets.table.status')}:</strong>{' '}
+                      <strong>Trạng thái:</strong>{' '}
                       <span className={`badge bg-${getStatusBadgeClass(asset.status_name)}`}>
-                        {t(`manageAssets.status.${statusNameToKey(asset.status_name)}`)}
+                        {asset.status_name}
                       </span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>Số serial:</strong> <span>{asset.serial_number || t('header.noData')}</span>
+                      <strong>Số serial:</strong> <span>{asset.serial_number || 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>Cấu hình:</strong> <span>{asset.configuration || t('header.noData')}</span>
+                      <strong>Cấu hình:</strong> <span>{asset.configuration || 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>Hệ điều hành:</strong> <span>{asset.OS || asset.os || t('header.noData')}</span>
+                      <strong>Hệ điều hành:</strong> <span>{asset.OS || asset.os || 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>Office:</strong> <span>{asset.OFFICE || asset.office || t('header.noData')}</span>
+                      <strong>Office:</strong> <span>{asset.OFFICE || asset.office || 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>Phần mềm:</strong> <span>{asset.software_used_name || t('header.noData')}</span>
+                      <strong>Phần mềm:</strong> <span>{asset.software_used_name || 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>Loại thiết bị:</strong> <span>{asset.type || t('header.noData')}</span>
+                      <strong>Loại thiết bị:</strong> <span>{asset.type || 'Không có'}</span>
                     </div>
                   </Col>
                   <Col md={6}>
                     <div className={styles.infoGroup}>
-                      <strong>{t('manageAssets.modals.add.fields.factoryArea')}:</strong> <span>{asset.factory_area || t('header.noData')}</span>
+                      <strong>Khu vực nhà máy:</strong> <span>{asset.factory_area || 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>{t('manageAssets.modals.add.fields.location')}:</strong> <span>{asset.location_name || asset.location_id || t('header.noData')}</span>
+                      <strong>Vị trí:</strong> <span>{asset.location_name || asset.location_id || 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>{t('manageAssets.modals.add.fields.vendor')}:</strong> <span>{asset.vendor_name || t('header.noData')}</span>
+                      <strong>Nhà cung cấp:</strong> <span>{asset.vendor_name || 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>{t('manageAssets.modals.add.fields.macAddress')}:</strong> <span>{asset.mac_address || t('header.noData')}</span>
+                      <strong>Địa chỉ MAC:</strong> <span>{asset.mac_address || 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>Địa chỉ IP:</strong> <span>{Array.isArray(asset.ip_address) ? asset.ip_address.join(', ') : asset.ip_address || t('header.noData')}</span>
+                      <strong>Địa chỉ IP:</strong> <span>{Array.isArray(asset.ip_address) ? asset.ip_address.join(', ') : asset.ip_address || 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>MAC WIFI:</strong> <span>{asset.mac_wifi || t('header.noData')}</span>
+                      <strong>MAC WIFI:</strong> <span>{asset.mac_wifi || 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>Hub:</strong> <span>{asset.hub || t('header.noData')}</span>
+                      <strong>Hub:</strong> <span>{asset.hub || 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>Số LAN VCS:</strong> <span>{asset.vcs_lan_no || t('header.noData')}</span>
+                      <strong>Số LAN VCS:</strong> <span>{asset.vcs_lan_no || 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>{t('manageAssets.modals.add.fields.purchaseDate')}:</strong> <span>{asset.purchase_date ? new Date(asset.purchase_date).toLocaleDateString('vi-VN') : t('header.noData')}</span>
+                      <strong>Ngày mua:</strong> <span>{asset.purchase_date ? new Date(asset.purchase_date).toLocaleDateString('vi-VN') : 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>{t('manageAssets.modals.add.fields.purchasePrice')}:</strong> <span>{formatCurrency(asset.purchase_price)}</span>
+                      <strong>Giá mua:</strong> <span>{formatCurrency(asset.purchase_price)}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>{t('manageAssets.modals.add.fields.startUseDate')}:</strong> <span>{asset.start_use_date ? new Date(asset.start_use_date).toLocaleDateString('vi-VN') : t('header.noData')}</span>
+                      <strong>Ngày bắt đầu sử dụng:</strong> <span>{asset.start_use_date ? new Date(asset.start_use_date).toLocaleDateString('vi-VN') : 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>{t('manageAssets.modals.add.fields.warrantyExpiry')}:</strong> <span>{asset.warranty_expiry ? new Date(asset.warranty_expiry).toLocaleDateString('vi-VN') : t('header.noData')}</span>
+                      <strong>Hạn bảo hành:</strong> <span>{asset.warranty_expiry ? new Date(asset.warranty_expiry).toLocaleDateString('vi-VN') : 'Không có'}</span>
                     </div>
                     <div className={styles.infoGroup}>
-                      <strong>Chu kỳ bảo trì (tháng):</strong> <span>{asset.maintenance_cycle || t('header.noData')}</span>
+                      <strong>Chu kỳ bảo trì (tháng):</strong> <span>{asset.maintenance_cycle || 'Không có'}</span>
                     </div>
                   </Col>
                 </Row>
@@ -722,7 +818,7 @@ export default function AssetDetail() {
                     className="w-100"
                   >
                     <i className="fas fa-edit me-2"></i>
-                    {t('header.edit')}
+                    Chỉnh sửa
                   </Button>
                 </Card.Footer>
               </Card.Body>
@@ -733,18 +829,18 @@ export default function AssetDetail() {
           <Col md={6}>
             <Card className={styles.infoCard}>
               <Card.Header className="bg-primary text-white">
-                <h5 className="mb-0">{t('manageAssets.table.status')}</h5>
+                <h5 className="mb-0">Lịch sử sử dụng</h5>
               </Card.Header>
               <Card.Body>
                 <div className={styles.tableContainer}>
                   <Table striped bordered hover responsive size="sm">
                     <thead className="table-dark">
                       <tr>
-                        <th>{t('manageUser.table.employeeCode')}</th>
-                        <th>{t('manageUser.table.fullName')}</th>
-                        <th>{t('historyone.table.handoverDate')}</th>
-                        <th>{t('manageAssets.table.status')}</th>
-                        <th>{t('historyone.table.note')}</th>
+                        <th>Mã nhân viên</th>
+                        <th>Họ và tên</th>
+                        <th>Ngày bàn giao</th>
+                        <th>Trạng thái</th>
+                        <th>Ghi chú</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -755,20 +851,20 @@ export default function AssetDetail() {
                             onClick={() => handleHistoryClick(record)}
                             style={{ cursor: 'pointer' }}
                           >
-                            <td>{record.emp_code || t('header.noData')}</td>
-                            <td>{record.emp_name || t('header.noData')}</td>
+                            <td>{record.emp_code || 'Không có'}</td>
+                            <td>{record.emp_name || 'Không có'}</td>
                             <td>{new Date(record.handover_date).toLocaleDateString('vi-VN')}</td>
                             <td>
                               <span className={`badge bg-${getStatusBadgeClass(record.history_status)}`}>
-                                {t(`historyone.status.${statusNameToKey(record.history_status)}`)}
+                                {record.history_status}
                               </span>
                             </td>
-                            <td>{record.note || t('header.noData')}</td>
+                            <td>{record.note || 'Không có'}</td>
                           </tr>
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={5} className="text-center">{t('historyone.noData')}</td>
+                          <td colSpan={5} className="text-center">Không có dữ liệu</td>
                         </tr>
                       )}
                     </tbody>
@@ -782,19 +878,20 @@ export default function AssetDetail() {
           <Col md={12}>
             <Card className={styles.infoCard}>
               <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
-                <h5 className="mb-0">{t('manageAssets.modals.detail.title')}</h5>
+                <h5 className="mb-0">Lịch sử sửa chữa</h5>
               </Card.Header>
               <Card.Body>
                 <div className="table-responsive">
                   <Table striped bordered hover responsive size="sm">
                     <thead className="table-dark">
                       <tr>
-                        <th>{t('historyDetail.deviceInfo.startUseDate')}</th>
-                        <th>{t('manageAssets.modals.add.fields.vendor')}</th>
-                        <th>{t('manageAssets.modals.add.fields.purchasePrice')}</th>
-                        <th>{t('manageAssets.modals.add.fields.warrantyExpiry')}</th>
-                        <th>{t('manageAssets.table.status')}</th>
-                        <th>{t('header.actions')}</th>
+                        <th>Ngày sửa chữa</th>
+                        <th>Người sửa chữa</th>
+                        <th>Mô tả</th>
+                        <th>Chi phí</th>
+                        <th>Ngày bảo dưỡng tiếp theo</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -808,7 +905,7 @@ export default function AssetDetail() {
                             <td style={{ whiteSpace: 'nowrap' }}>{repair.next_maintenance_date ? new Date(repair.next_maintenance_date).toLocaleDateString('vi-VN') : '-'}</td>
                             <td>
                               <span className={`badge bg-${getStatusBadgeClass(repair.repair_status)}`}>
-                                {t(`manageAssets.repairStatus.${repairStatusToKey(repair.repair_status)}`)}
+                                {repair.repair_status}
                               </span>
                             </td>
                             <td>
@@ -833,7 +930,7 @@ export default function AssetDetail() {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={7} className="text-center">{t('manageAssets.noData')}</td>
+                          <td colSpan={7} className="text-center">Không có dữ liệu</td>
                         </tr>
                       )}
                     </tbody>
@@ -873,7 +970,6 @@ export default function AssetDetail() {
                       <strong>Vị trí:</strong>
                       <span>{selectedHistory.position || 'Không có'}</span>
                     </div>
-
                     <div className="info-group mb-3">
                       <strong>Vị trí làm việc:</strong>
                       <span>{selectedHistory.location_position || 'Không có'}</span>
@@ -898,7 +994,7 @@ export default function AssetDetail() {
                     <div className="info-group mb-3">
                       <strong>Trạng thái:</strong>
                       <span className={`badge bg-${getStatusBadgeClass(selectedHistory.history_status)}`}>
-                        {t(`historyone.status.${statusNameToKey(selectedHistory.history_status)}`)}
+                        {selectedHistory.history_status}
                       </span>
                     </div>
                   </div>
@@ -1370,6 +1466,8 @@ export default function AssetDetail() {
                   <tbody>
                     {paginatedEmployees.map(emp => {
                       const isChecked = selectedEmployees.includes(emp.employee_id);
+                      const empData = multiAssignData[emp.employee_id] || { floors: {} };
+
                       return (
                         <tr key={emp.employee_id}>
                           <td>
@@ -1384,44 +1482,67 @@ export default function AssetDetail() {
                           <td>{emp.department_name}</td>
                           <td>
                             {isChecked && asset?.status_name !== 'Chờ xóa' && (
-                              <select
-                                className="form-select form-select-sm"
-                                value={multiAssignData[emp.employee_id]?.floor || ''}
-                                onChange={e => handleMultiAssignFloorChange(emp.employee_id, e.target.value, multiAssignData[emp.employee_id]?.ipType || 'DHCP')}
-                              >
-                                <option value="">Chọn tầng</option>
-                                <option value="1F">1F</option>
-                                <option value="2F">2F</option>
-                                <option value="BF">BF</option>
-                              </select>
-                            )}
-                          </td>
-                          <td>
-                            {isChecked && asset?.status_name !== 'Chờ xóa' && (
-                              <select
-                                className="form-select form-select-sm"
-                                value={multiAssignData[emp.employee_id]?.ipType || 'DHCP'}
-                                onChange={e => handleMultiAssignIPTypeChange(emp.employee_id, e.target.value as 'DHCP' | 'FIXED')}
-                                disabled={!multiAssignData[emp.employee_id]?.floor}
-                              >
-                                <option value="DHCP">DHCP</option>
-                                <option value="FIXED">FIX</option>
-                              </select>
-                            )}
-                          </td>
-                          <td>
-                            {isChecked && asset?.status_name !== 'Chờ xóa' && (
-                              <select
-                                className="form-select form-select-sm"
-                                value={multiAssignData[emp.employee_id]?.ip || ''}
-                                onChange={e => handleMultiAssignIPChange(emp.employee_id, e.target.value)}
-                                disabled={!multiAssignData[emp.employee_id]?.floor}
-                              >
-                                <option value="">Chọn IP {asset?.status_name === 'Đang sử dụng' ? '(tùy chọn)' : ''}</option>
-                                {(multiAvailableIPs[emp.employee_id] || []).map(ip => (
-                                  <option key={ip} value={ip}>{ip}</option>
+                              <div className="d-flex flex-column gap-2">
+                                {['1F', '2F', 'BF'].map(floor => (
+                                  <div key={floor} className="d-flex align-items-center gap-2">
+                                    <input
+                                      type="checkbox"
+                                      checked={!!empData.floors[floor]}
+                                      onChange={e => {
+                                        if (e.target.checked) {
+                                          handleMultiAssignFloorChange(emp.employee_id, floor);
+                                        } else {
+                                          setMultiAssignData(prev => {
+                                            const newData = { ...prev };
+                                            if (newData[emp.employee_id]) {
+                                              const { [floor]: removed, ...rest } = newData[emp.employee_id].floors;
+                                              newData[emp.employee_id].floors = rest;
+                                            }
+                                            return newData;
+                                          });
+                                        }
+                                      }}
+                                    />
+                                    <span>{floor}</span>
+                                  </div>
                                 ))}
-                              </select>
+                              </div>
+                            )}
+                          </td>
+                          <td>
+                            {isChecked && asset?.status_name !== 'Chờ xóa' && (
+                              <div className="d-flex flex-column gap-2">
+                                {Object.entries(empData.floors).map(([floor, floorData]) => (
+                                  <select
+                                    key={floor}
+                                    className="form-select form-select-sm"
+                                    value={floorData.ipType}
+                                    onChange={e => handleMultiAssignIPTypeChange(emp.employee_id, floor, e.target.value as 'DHCP' | 'FIXED')}
+                                  >
+                                    <option value="DHCP">DHCP</option>
+                                    <option value="FIXED">FIX</option>
+                                  </select>
+                                ))}
+                              </div>
+                            )}
+                          </td>
+                          <td>
+                            {isChecked && asset?.status_name !== 'Chờ xóa' && (
+                              <div className="d-flex flex-column gap-2">
+                                {Object.entries(empData.floors).map(([floor, floorData]) => (
+                                  <select
+                                    key={floor}
+                                    className="form-select form-select-sm"
+                                    value={floorData.ip}
+                                    onChange={e => handleMultiAssignIPChange(emp.employee_id, floor, e.target.value)}
+                                  >
+                                    <option value="">Chọn IP {asset?.status_name === 'Đang sử dụng' ? '(tùy chọn)' : ''}</option>
+                                    {(multiAvailableIPs[floor] || []).map(ip => (
+                                      <option key={ip} value={ip}>{ip}</option>
+                                    ))}
+                                  </select>
+                                ))}
+                              </div>
                             )}
                           </td>
                         </tr>

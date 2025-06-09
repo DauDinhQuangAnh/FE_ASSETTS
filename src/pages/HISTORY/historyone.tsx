@@ -4,7 +4,6 @@ import { Form, Button, Alert, Spinner, Table, Badge, Pagination } from 'react-bo
 import axios from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import './historyone.css';
 
 interface AssetHistory {
@@ -31,9 +30,7 @@ interface AssetHistory {
   note: string;
 }
 
-
 export default function historyone() {
-  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
@@ -86,8 +83,8 @@ export default function historyone() {
       setTotalPages(Math.ceil(response.data.length / ITEMS_PER_PAGE));
     } catch (err: any) {
       console.error('Error fetching history records:', err);
-      setError(err.response?.data?.message || t('historyone.messages.loadError'));
-      toast.error(t('historyone.messages.loadError'));
+      setError(err.response?.data?.message || 'Không thể tải dữ liệu lịch sử');
+      toast.error('Không thể tải dữ liệu lịch sử');
     } finally {
       setLoading(false);
     }
@@ -110,7 +107,7 @@ export default function historyone() {
   };
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return t('historyone.status.notUpdated');
+    if (!dateString) return 'Chưa cập nhật';
     const date = new Date(dateString);
     return date.toLocaleDateString('vi-VN', {
       year: 'numeric',
@@ -122,27 +119,27 @@ export default function historyone() {
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'đã đăng ký':
-        return <Badge bg="info" className="history-badge">{t('historyone.status.registered')}</Badge>;
+        return <Badge bg="info" className="history-badge">Đã đăng ký</Badge>;
       case 'đang sử dụng':
-        return <Badge bg="success" className="history-badge">{t('historyone.status.inUse')}</Badge>;
+        return <Badge bg="success" className="history-badge">Đang sử dụng</Badge>;
       case 'ngưng sử dụng':
-        return <Badge bg="warning" text="dark" className="history-badge">{t('historyone.status.stopped')}</Badge>;
+        return <Badge bg="warning" text="dark" className="history-badge">Ngưng sử dụng</Badge>;
       case 'đang chờ xóa':
-        return <Badge bg="danger" className="history-badge">{t('historyone.status.pendingDelete')}</Badge>;
+        return <Badge bg="danger" className="history-badge">Đang chờ xóa</Badge>;
       case 'đã trả lại':
-        return <Badge bg="danger" className="history-badge">{t('historyone.status.returned')}</Badge>;
+        return <Badge bg="danger" className="history-badge">Đã trả lại</Badge>;
       case 'chờ bàn giao':
-        return <Badge bg="info" className="history-badge">{t('historyone.status.pendingHandover')}</Badge>;
+        return <Badge bg="info" className="history-badge">Chờ bàn giao</Badge>;
       case 'đã hủy':
-        return <Badge bg="danger" className="history-badge">{t('historyone.status.canceled')}</Badge>;
+        return <Badge bg="danger" className="history-badge">Đã hủy</Badge>;
       case 'đã xóa':
-        return <Badge bg="danger" className="history-badge">{t('historyone.status.deleted')}</Badge>;
+        return <Badge bg="danger" className="history-badge">Đã xóa</Badge>;
       case 'cấp phát chờ xóa':
-        return <Badge bg="warning" className="history-badge">{t('historyone.status.pendingAllocationDelete')}</Badge>;
+        return <Badge bg="warning" className="history-badge">Cấp phát chờ xóa</Badge>;
       case 'khác':
-        return <Badge bg="secondary" className="history-badge">{t('historyone.status.other')}</Badge>;
+        return <Badge bg="secondary" className="history-badge">Khác</Badge>;
       default:
-        return <Badge bg="secondary" className="history-badge">{t('historyone.status.notUpdated')}</Badge>;
+        return <Badge bg="secondary" className="history-badge">Chưa cập nhật</Badge>;
     }
   };
 
@@ -163,7 +160,7 @@ export default function historyone() {
     if (startPage > 1) {
       pages.push(
         <Pagination.Item key="first" onClick={() => handlePageChange(1)}>
-          {t('historyone.pagination.first')}
+          Đầu
         </Pagination.Item>
       );
     }
@@ -171,7 +168,7 @@ export default function historyone() {
     if (currentPage > 1) {
       pages.push(
         <Pagination.Item key="prev" onClick={() => handlePageChange(currentPage - 1)}>
-          {t('historyone.pagination.previous')}
+          Trước
         </Pagination.Item>
       );
     }
@@ -191,7 +188,7 @@ export default function historyone() {
     if (currentPage < totalPages) {
       pages.push(
         <Pagination.Item key="next" onClick={() => handlePageChange(currentPage + 1)}>
-          {t('historyone.pagination.next')}
+          Sau
         </Pagination.Item>
       );
     }
@@ -199,7 +196,7 @@ export default function historyone() {
     if (endPage < totalPages) {
       pages.push(
         <Pagination.Item key="last" onClick={() => handlePageChange(totalPages)}>
-          {t('historyone.pagination.last')}
+          Cuối
         </Pagination.Item>
       );
     }
@@ -210,7 +207,7 @@ export default function historyone() {
   return (
     <Layout>
       <div className="history-container">
-        <h4>{t('historyone.title')}</h4>
+        <h4>Lịch sử sử dụng thiết bị</h4>
 
         <div className="history-filters">
           <div className="history-filter-group">
@@ -219,21 +216,21 @@ export default function historyone() {
               onChange={handleStatusChange}
               className="history-filter-select"
             >
-              <option value="all">{t('historyone.filters.allStatus')}</option>
-              <option value="Đã đăng ký">{t('historyone.filters.registered')}</option>
-              <option value="Đang sử dụng">{t('historyone.filters.inUse')}</option>
-              <option value="Chờ bàn giao">{t('historyone.filters.pendingHandover')}</option>
-              <option value="Đang chờ xóa">{t('historyone.filters.pendingDelete')}</option>
-              <option value="Cấp phát chờ xóa">{t('historyone.filters.pendingAllocationDelete')}</option>
-              <option value="Hủy bỏ">{t('historyone.filters.canceled')}</option>
-              <option value="Khác">{t('historyone.filters.other')}</option>
+              <option value="all">Tất cả trạng thái</option>
+              <option value="Đã đăng ký">Đã đăng ký</option>
+              <option value="Đang sử dụng">Đang sử dụng</option>
+              <option value="Chờ bàn giao">Chờ bàn giao</option>
+              <option value="Đang chờ xóa">Đang chờ xóa</option>
+              <option value="Cấp phát chờ xóa">Cấp phát chờ xóa</option>
+              <option value="Hủy bỏ">Hủy bỏ</option>
+              <option value="Khác">Khác</option>
             </Form.Select>
           </div>
           <div className="history-search-container">
             <Form.Group>
               <Form.Control
                 type="text"
-                placeholder={t('historyone.search.placeholder')}
+                placeholder="Tìm kiếm theo mã, tên thiết bị hoặc nhân viên..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="history-search-input"
@@ -243,7 +240,7 @@ export default function historyone() {
           <div className="history-refresh-btn">
             <Button variant="light" onClick={fetchHistoryRecords} className="history-btn">
               <i className="fas fa-sync-alt me-2"></i>
-              {t('historyone.refresh')}
+              Làm mới
             </Button>
           </div>
         </div>
@@ -253,7 +250,7 @@ export default function historyone() {
         {loading ? (
           <div className="history-loading">
             <Spinner animation="border" />
-            <p className="mt-3 text-muted">{t('historyone.loading')}</p>
+            <p className="mt-3 text-muted">Đang tải dữ liệu...</p>
           </div>
         ) : (
           <div className="history-table-container">
@@ -262,16 +259,16 @@ export default function historyone() {
                 <Table responsive hover className="history-table">
                   <thead>
                     <tr>
-                      <th>{t('historyone.table.assetCode')}</th>
-                      <th>{t('historyone.table.assetName')}</th>
-                      <th>{t('historyone.table.employeeCode')}</th>
-                      <th>{t('historyone.table.employeeName')}</th>
-                      <th>{t('historyone.table.handoverBy')}</th>
-                      <th>{t('historyone.table.status')}</th>
-                      <th>{t('historyone.table.handoverDate')}</th>
-                      <th>{t('historyone.table.returnDate')}</th>
-                      <th>{t('historyone.table.floor')}</th>
-                      <th>{t('historyone.table.note')}</th>
+                      <th>Mã thiết bị</th>
+                      <th>Tên thiết bị</th>
+                      <th>Mã nhân viên</th>
+                      <th>Tên nhân viên</th>
+                      <th>Người bàn giao</th>
+                      <th>Trạng thái</th>
+                      <th>Ngày bàn giao</th>
+                      <th>Ngày trả</th>
+                      <th>Tầng</th>
+                      <th>Ghi chú</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -290,19 +287,16 @@ export default function historyone() {
                         <td>{getStatusBadge(record.history_status)}</td>
                         <td>{formatDate(record.handover_date)}</td>
                         <td>{formatDate(record.returned_date)}</td>
-                        <td>{record.floor || t('historyone.status.notUpdated')}</td>
-                        <td>{record.note || t('historyone.status.notUpdated')}</td>
+                        <td>{record.floor || 'Chưa cập nhật'}</td>
+                        <td>{record.note || 'Chưa cập nhật'}</td>
                       </tr>
                     ))}
                   </tbody>
                 </Table>
                 <div className="d-flex justify-content-between align-items-center mt-3">
                   <div className="text-muted">
-                    {t('historyone.pagination.showing', {
-                      start: (currentPage - 1) * ITEMS_PER_PAGE + 1,
-                      end: Math.min(currentPage * ITEMS_PER_PAGE, totalRecords),
-                      total: totalRecords
-                    })}
+                    Hiển thị {filteredRecords.length === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1}
+                    -{Math.min(currentPage * ITEMS_PER_PAGE, totalRecords)} trong tổng số {totalRecords} bản ghi
                   </div>
                   <Pagination className="mb-0">
                     {renderPagination()}
@@ -312,7 +306,7 @@ export default function historyone() {
             ) : (
               <Alert variant="info" className="history-alert">
                 <i className="fas fa-info-circle me-2"></i>
-                {t('historyone.noData')}
+                Không có dữ liệu
               </Alert>
             )}
           </div>

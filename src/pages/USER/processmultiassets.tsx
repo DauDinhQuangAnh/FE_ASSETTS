@@ -35,7 +35,7 @@ interface ProcessMultiAssetsModalProps {
     onAssetsAssigned: () => void;
 }
 
-const ProcessMultiAssetsModal: React.FC<ProcessMultiAssetsModalProps> = ({ show, onHide, user, onAssetsAssigned }) => {
+const ProcessMultiAssetsModal: React.FC<ProcessMultiAssetsModalProps> = ({ show, onHide, user, onAssetsAssigned }): React.JSX.Element | null => {
 
     const [availableAssets, setAvailableAssets] = useState<Asset[]>([]);
     const [availableInUseAssets, setAvailableInUseAssets] = useState<Asset[]>([]);
@@ -240,13 +240,19 @@ const ProcessMultiAssetsModal: React.FC<ProcessMultiAssetsModalProps> = ({ show,
                     continue;
                 }
                 const ips = typeof asset.ip_address === 'string' ? asset.ip_address.split(', ') : asset.ip_address;
-                const floors = ips.map((ip: string) => getFloorFromIP(ip)).filter(Boolean);
+                const firstIp = ips.length > 0 ? ips[0] : null;
+                const floorFromFirstIp = firstIp ? getFloorFromIP(firstIp) : null;
+
+                if (!floorFromFirstIp) {
+                    failedAssignments.push({ asset_code: asset.asset_code || 'N/A', message: 'Không xác định được tầng từ IP' });
+                    continue;
+                }
+
                 const payload = {
                     asset_id: asset.asset_id,
                     department_id: user.department_id,
                     handover_by: JSON.parse(sessionStorage.getItem('auth') || '{}').employee_id,
-                    floors: floors, // Note: BE might only use the first floor here
-                    note: multiAssignData[String(asset.asset_id)]?.note || null,
+                    floor: floorFromFirstIp, // Gửi tầng từ IP đầu tiên
                     is_handover: true // Assuming true for delete handover
                 };
                 try {
@@ -313,7 +319,7 @@ const ProcessMultiAssetsModal: React.FC<ProcessMultiAssetsModalProps> = ({ show,
                     <Form.Group style={{ flex: '1' }}>
                         <Form.Select
                             value={selectedAssetType}
-                            onChange={(e) => {
+                            onChange={e => {
                                 const selectedValue = e.target.value as 'all' | 'new' | 'Đang sử dụng' | 'Chờ xóa';
                                 setSelectedAssetType(selectedValue);
                                 setSearchTerm('');
@@ -335,7 +341,7 @@ const ProcessMultiAssetsModal: React.FC<ProcessMultiAssetsModalProps> = ({ show,
                             type="text"
                             placeholder="Tìm theo mã, tên, thương hiệu hoặc model..."
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={e => setSearchTerm(e.target.value)}
                             disabled={false}
                         />
                     </Form.Group>
@@ -361,7 +367,7 @@ const ProcessMultiAssetsModal: React.FC<ProcessMultiAssetsModalProps> = ({ show,
                                                 </span>
                                             }
                                             checked={floorFilters[floor as keyof FloorFilterType]}
-                                            onChange={(e) => {
+                                            onChange={e => {
                                                 setFloorFilters(prev => ({
                                                     ...prev,
                                                     [floor as keyof FloorFilterType]: e.target.checked
@@ -618,29 +624,6 @@ const ProcessMultiAssetsModal: React.FC<ProcessMultiAssetsModalProps> = ({ show,
                             )}
                         </div>
                     </Form.Group>
-
-                    {/* Note for Delete Assets */}
-                    {selectedAssetType === 'Chờ xóa' && selectedAssetsAllType.length > 0 && (
-                        <Form.Group className="mb-3">
-                            <Form.Label>Ghi chú (Áp dụng chung cho các thiết bị chờ xóa đã chọn)</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={3}
-                                value={multiAssignData[String(selectedAssetsAllType[0]?.asset_id)]?.note || ''}
-                                onChange={e => setMultiAssignData(prev => {
-                                    const newState = { ...prev };
-                                    // Apply note to all selected delete assets
-                                    selectedAssetsAllType.forEach(asset => {
-                                        if (asset.status_name === 'Chờ xóa') {
-                                            newState[String(asset.asset_id)] = { ...newState[String(asset.asset_id)], note: e.target.value };
-                                        }
-                                    });
-                                    return newState;
-                                })}
-                                placeholder="Nhập ghi chú"
-                            />
-                        </Form.Group>
-                    )}
 
                     <div className="d-flex justify-content-end gap-2">
                         <Button variant="secondary" onClick={handleCloseAssignModal}>

@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from 'react';
 import { Button, Form, Table, Modal, Spinner, Alert, Row, Col, Pagination } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useTranslation } from 'react-i18next';
 import axios from '../../api/axiosInstance';
 import Layout from '../../components/Layout';
 import styles from './ManageAssets.module.css';
@@ -17,7 +16,6 @@ import type {
 } from '../../types/typeAsset';
 
 export default function ManageAssets() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -102,15 +100,15 @@ export default function ManageAssets() {
         );
         setDepartments(uniqueDepartments);
       } catch (err: any) {
-        setError(err.response?.data?.message || t('manageAssets.messages.loadError'));
-        toast.error(t('manageAssets.messages.loadError'));
+        setError(err.response?.data?.message || 'Lỗi khi tải danh sách thiết bị');
+        toast.error('Lỗi khi tải danh sách thiết bị');
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [t]);
+  }, []);
 
   useEffect(() => {
     const fetchDropdownData = async () => {
@@ -266,11 +264,11 @@ export default function ManageAssets() {
     try {
       await axios.delete(`/asset/${assetToDelete.asset_id}`);
       setAssets(prev => prev.filter(asset => asset.asset_id !== assetToDelete.asset_id));
-      toast.success(t('manageAssets.messages.deleteSuccess'));
+      toast.success('Thiết bị đã được xóa thành công');
       setShowDeleteModal(false);
       setAssetToDelete(null);
     } catch (err: any) {
-      toast.error(err.response?.data?.message || t('manageAssets.messages.deleteError'));
+      toast.error(err.response?.data?.message || 'Lỗi khi xóa thiết bị');
     }
   };
 
@@ -297,7 +295,7 @@ export default function ManageAssets() {
       const response = await axios.post('/assets', newAsset);
       console.log('Response từ API:', response.data);
 
-      toast.success(t('manageAssets.messages.addSuccess'));
+      toast.success('Thiết bị đã được thêm thành công');
       setShowAddModal(false);
 
       // Reset form
@@ -343,7 +341,7 @@ export default function ManageAssets() {
         response: err.response?.data,
         status: err.response?.status
       });
-      toast.error(err.response?.data?.message || t('manageAssets.messages.addError'));
+      toast.error(err.response?.data?.message || 'Lỗi khi thêm thiết bị');
     } finally {
       setAddLoading(false);
     }
@@ -388,7 +386,7 @@ export default function ManageAssets() {
       <Layout>
         <div className={styles['loading-container']}>
           <Spinner animation="border" className={styles['loading-spinner']} />
-          <p className="mt-3 text-muted">{t('manageAssets.loading')}</p>
+          <p className="mt-3 text-muted">Đang tải danh sách thiết bị...</p>
         </div>
       </Layout>
     );
@@ -399,21 +397,21 @@ export default function ManageAssets() {
       <div className={styles['manage-assets-container']}>
         <div className={styles['header-section']}>
           <div className={styles['header-content']}>
-            <h1 className={styles['header-title']}>{t('manageAssets.title')}</h1>
+            <h1 className={styles['header-title']}>Quản lý thiết bị</h1>
             <div className={styles['search-container']}>
               <Form.Control
                 type="text"
                 name="search"
                 value={filters.search}
                 onChange={handleFilterChange}
-                placeholder={t('manageAssets.search.placeholder')}
+                placeholder="Tìm kiếm theo mã thiết bị..."
                 className={styles['search-input']}
               />
             </div>
             <div className={styles['header-actions']}>
               <Button variant="light" onClick={() => setShowAddModal(true)}>
                 <i className="fas fa-plus me-2"></i>
-                {t('manageAssets.addNewAsset')}
+                Thêm thiết bị mới
               </Button>
             </div>
           </div>
@@ -424,16 +422,16 @@ export default function ManageAssets() {
             <Row className="g-3">
               <Col md={5}>
                 <Form.Group className={styles['filter-group']}>
-                  <Form.Label className={styles['filter-label']}>{t('manageAssets.filters.status')}</Form.Label>
+                  <Form.Label className={styles['filter-label']}>Trạng thái</Form.Label>
                   <Form.Select
                     name="status"
                     value={filters.status}
                     onChange={e => setFilters(prev => ({ ...prev, status: e.target.value }))}
                   >
-                    <option value="all">{t('manageAssets.filters.allStatus')}</option>
+                    <option value="all">Tất cả</option>
                     {uniqueStatusKeys.map(key => (
                       <option key={key} value={key}>
-                        {t(`manageAssets.status.${key}`)}
+                        {key}
                       </option>
                     ))}
                   </Form.Select>
@@ -441,13 +439,13 @@ export default function ManageAssets() {
               </Col>
               <Col md={5}>
                 <Form.Group className={styles['filter-group']}>
-                  <Form.Label className={styles['filter-label']}>{t('manageAssets.filters.category')}</Form.Label>
+                  <Form.Label className={styles['filter-label']}>Loại thiết bị</Form.Label>
                   <Form.Select
                     name="category"
                     value={filters.category}
                     onChange={handleFilterChange}
                   >
-                    <option value="all">{t('manageAssets.filters.allCategories')}</option>
+                    <option value="all">Tất cả</option>
                     {categories.map(category => (
                       <option key={category.category_id} value={category.category_name}>
                         {category.category_name}
@@ -460,7 +458,7 @@ export default function ManageAssets() {
                 <div className={styles['asset-count-container']}>
                   <div className="d-flex align-items-center justify-content-end h-100">
                     <small className={styles['asset-count']}>
-                      {t('manageAssets.filters.assetCount', { count: filteredAssets.length })}
+                      {filteredAssets.length} thiết bị
                     </small>
                   </div>
                 </div>
@@ -472,7 +470,7 @@ export default function ManageAssets() {
             <Alert variant="danger">{error}</Alert>
           ) : filteredAssets.length === 0 ? (
             <div className={styles['empty-state']}>
-              <p>{t('manageAssets.noData')}</p>
+              <p>Không tìm thấy thiết bị nào phù hợp với bộ lọc</p>
             </div>
           ) : (
             <>
@@ -480,13 +478,13 @@ export default function ManageAssets() {
                 <Table hover>
                   <thead>
                     <tr>
-                      <th>{t('manageAssets.table.assetCode')}</th>
-                      <th>{t('manageAssets.table.assetName')}</th>
-                      <th>{t('manageAssets.table.type')}</th>
-                      <th style={{ minWidth: '141px' }}>{t('manageAssets.table.status')}</th>
-                      <th>{t('manageAssets.table.department')}</th>
-                      <th>{t('manageAssets.table.deviceType')}</th>
-                      <th>{t('manageAssets.table.location')}</th>
+                      <th>Mã thiết bị</th>
+                      <th>Tên thiết bị</th>
+                      <th>Loại</th>
+                      <th style={{ minWidth: '141px' }}>Trạng thái</th>
+                      <th>Phòng ban</th>
+                      <th>Loại thiết bị</th>
+                      <th>Vị trí</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -501,7 +499,7 @@ export default function ManageAssets() {
                         <td>{asset.category_name}</td>
                         <td>
                           <span className={getStatusBadgeClass(asset.status_name)}>
-                            {t(`manageAssets.status.${statusNameToKey(asset.status_name)}`)}
+                            {asset.status_name}
                           </span>
                         </td>
                         <td>{asset.department_name}</td>
@@ -524,17 +522,17 @@ export default function ManageAssets() {
           className={styles['asset-detail-modal']}
         >
           <Modal.Header closeButton>
-            <Modal.Title>{t('manageAssets.modals.detail.title')}</Modal.Title>
+            <Modal.Title>Chi tiết thiết bị</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {/* No need to pass selectedAsset to the modal */}
+            {/* Hiển thị chi tiết thiết bị ở đây nếu cần */}
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => setShowDetailModal(false)}>
-              {t('manageAssets.modals.detail.close')}
+              Đóng
             </Button>
             <Button variant="primary" onClick={() => navigate(`/edit-asset/${assetToDelete?.asset_id}`)}>
-              {t('manageAssets.modals.detail.edit')}
+              Chỉnh sửa
             </Button>
           </Modal.Footer>
         </Modal>
@@ -545,34 +543,31 @@ export default function ManageAssets() {
           centered
         >
           <Modal.Header closeButton>
-            <Modal.Title>{t('manageAssets.modals.delete.title')}</Modal.Title>
+            <Modal.Title>Xác nhận xóa</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {t('manageAssets.modals.delete.message', {
-              assetName: assetToDelete?.asset_name,
-              assetCode: assetToDelete?.asset_code
-            })}
+            {`Bạn có chắc chắn muốn xóa thiết bị ${assetToDelete?.asset_name} (${assetToDelete?.asset_code})?`}
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-              {t('manageAssets.modals.delete.cancel')}
+              Hủy
             </Button>
             <Button variant="danger" onClick={handleDelete}>
-              {t('manageAssets.modals.delete.delete')}
+              Xóa
             </Button>
           </Modal.Footer>
         </Modal>
 
         <Modal show={showAddModal} onHide={() => setShowAddModal(false)} size="lg">
           <Modal.Header closeButton>
-            <Modal.Title>{t('manageAssets.modals.add.title')}</Modal.Title>
+            <Modal.Title>Thêm thiết bị mới</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form>
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.assetCode')} <span className="text-danger">*</span></Form.Label>
+                    <Form.Label>Mã thiết bị <span className="text-danger">*</span></Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.asset_code}
@@ -581,7 +576,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.assetName')} <span className="text-danger">*</span></Form.Label>
+                    <Form.Label>Tên thiết bị <span className="text-danger">*</span></Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.asset_name}
@@ -590,13 +585,13 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.category')} <span className="text-danger">*</span></Form.Label>
+                    <Form.Label>Loại thiết bị <span className="text-danger">*</span></Form.Label>
                     <Form.Select
                       value={newAsset.category_id}
                       onChange={(e) => setNewAsset({ ...newAsset, category_id: Number(e.target.value) })}
                       required
                     >
-                      <option value="">{t('manageAssets.modals.add.fields.category')}</option>
+                      <option value="">Chọn loại thiết bị</option>
                       {categories.map(category => (
                         <option key={category.category_id} value={category.category_id}>
                           {category.category_name}
@@ -605,7 +600,7 @@ export default function ManageAssets() {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.brand')}</Form.Label>
+                    <Form.Label>Thương hiệu</Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.brand}
@@ -613,7 +608,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.os')}</Form.Label>
+                    <Form.Label>Hệ điều hành</Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.OS}
@@ -621,7 +616,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.office')}</Form.Label>
+                    <Form.Label>Office</Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.OFFICE}
@@ -629,12 +624,12 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.softwareUsed')}</Form.Label>
+                    <Form.Label>Phần mềm sử dụng</Form.Label>
                     <Form.Select
                       value={newAsset.software_used}
                       onChange={(e) => setNewAsset({ ...newAsset, software_used: Number(e.target.value) })}
                     >
-                      <option value="">{t('manageAssets.modals.add.fields.softwareUsed')}</option>
+                      <option value="">Chọn phần mềm</option>
                       {softwareUsed.map(software => (
                         <option key={software.software_used_id} value={software.software_used_id}>
                           {software.software_used_name}
@@ -643,7 +638,7 @@ export default function ManageAssets() {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.configuration')}</Form.Label>
+                    <Form.Label>Cấu hình</Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.configuration}
@@ -651,7 +646,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.model')}</Form.Label>
+                    <Form.Label>Model</Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.model}
@@ -659,7 +654,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.serialNumber')}</Form.Label>
+                    <Form.Label>Số serial</Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.serial_number}
@@ -667,7 +662,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.type')}</Form.Label>
+                    <Form.Label>Loại</Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.type}
@@ -675,7 +670,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.ipAddress')}</Form.Label>
+                    <Form.Label>Địa chỉ IP</Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.ip_address}
@@ -683,7 +678,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.macAddress')}</Form.Label>
+                    <Form.Label>Địa chỉ MAC</Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.mac_address}
@@ -691,7 +686,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.hub')}</Form.Label>
+                    <Form.Label>Hub</Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.hub}
@@ -699,7 +694,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.vcsLanNo')}</Form.Label>
+                    <Form.Label>VCS LAN No</Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.vcs_lan_no}
@@ -709,7 +704,7 @@ export default function ManageAssets() {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.startUseDate')}</Form.Label>
+                    <Form.Label>Ngày bắt đầu sử dụng</Form.Label>
                     <Form.Control
                       type="date"
                       value={newAsset.start_use_date}
@@ -717,7 +712,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.factoryArea')}</Form.Label>
+                    <Form.Label>Khu vực nhà máy</Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.factory_area}
@@ -725,12 +720,12 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.department')}</Form.Label>
+                    <Form.Label>Phòng ban quản lý</Form.Label>
                     <Form.Select
                       value={newAsset.belongs_to_dept_id}
                       onChange={(e) => setNewAsset({ ...newAsset, belongs_to_dept_id: Number(e.target.value) })}
                     >
-                      <option value="">{t('manageAssets.modals.add.fields.department')}</option>
+                      <option value="">Chọn phòng ban</option>
                       {departments.map(dept => (
                         <option key={dept.department_id} value={dept.department_id}>
                           {dept.department_name}
@@ -739,12 +734,12 @@ export default function ManageAssets() {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.vendor')}</Form.Label>
+                    <Form.Label>Nhà cung cấp</Form.Label>
                     <Form.Select
                       value={newAsset.vendor_id}
                       onChange={(e) => setNewAsset({ ...newAsset, vendor_id: Number(e.target.value) })}
                     >
-                      <option value="">{t('manageAssets.modals.add.fields.vendor')}</option>
+                      <option value="">Chọn nhà cung cấp</option>
                       {vendors.map(vendor => (
                         <option key={vendor.vendor_id} value={vendor.vendor_id}>
                           {vendor.vendor_name}
@@ -753,12 +748,12 @@ export default function ManageAssets() {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.location')}</Form.Label>
+                    <Form.Label>Vị trí</Form.Label>
                     <Form.Select
                       value={newAsset.location_id}
                       onChange={(e) => setNewAsset({ ...newAsset, location_id: Number(e.target.value) })}
                     >
-                      <option value="">{t('manageAssets.modals.add.fields.location')}</option>
+                      <option value="">Chọn vị trí</option>
                       {locations.map(location => (
                         <option key={location.location_id} value={location.location_id}>
                           {location.location_name}
@@ -767,7 +762,7 @@ export default function ManageAssets() {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.purchaseDate')}</Form.Label>
+                    <Form.Label>Ngày mua</Form.Label>
                     <Form.Control
                       type="date"
                       value={newAsset.purchase_date}
@@ -775,7 +770,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.purchasePrice')}</Form.Label>
+                    <Form.Label>Giá mua</Form.Label>
                     <Form.Control
                       type="number"
                       value={newAsset.purchase_price}
@@ -783,7 +778,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.warrantyExpiry')}</Form.Label>
+                    <Form.Label>Hạn bảo hành</Form.Label>
                     <Form.Control
                       type="date"
                       value={newAsset.warranty_expiry}
@@ -791,7 +786,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.maintenanceCycle')}</Form.Label>
+                    <Form.Label>Chu kỳ bảo trì</Form.Label>
                     <Form.Control
                       type="number"
                       value={newAsset.maintenance_cycle}
@@ -799,13 +794,13 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.status')} <span className="text-danger">*</span></Form.Label>
+                    <Form.Label>Trạng thái <span className="text-danger">*</span></Form.Label>
                     <Form.Select
                       value={newAsset.status_id}
                       onChange={(e) => setNewAsset({ ...newAsset, status_id: Number(e.target.value) })}
                       required
                     >
-                      <option value="">{t('manageAssets.modals.add.fields.status')}</option>
+                      <option value="">Chọn trạng thái</option>
                       {statuses.map(status => (
                         <option key={status.status_id} value={status.status_id}>
                           {status.status_name}
@@ -814,7 +809,7 @@ export default function ManageAssets() {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.upgradeInfo')}</Form.Label>
+                    <Form.Label>Thông tin nâng cấp</Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={2}
@@ -823,7 +818,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.notes')}</Form.Label>
+                    <Form.Label>Ghi chú</Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={2}
@@ -832,7 +827,7 @@ export default function ManageAssets() {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('manageAssets.modals.add.fields.oldIp')}</Form.Label>
+                    <Form.Label>IP cũ</Form.Label>
                     <Form.Control
                       type="text"
                       value={newAsset.old_ip_address}
@@ -845,10 +840,10 @@ export default function ManageAssets() {
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => setShowAddModal(false)}>
-              {t('manageAssets.modals.add.buttons.cancel')}
+              Hủy
             </Button>
             <Button variant="primary" onClick={handleAddAsset}>
-              {t('manageAssets.modals.add.buttons.add')}
+              Thêm mới
             </Button>
           </Modal.Footer>
         </Modal>
